@@ -237,7 +237,7 @@ export default function BlackGame() {
         onLoad={() => setScriptsReady(true)}
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
-        <div className="max-w-[1800px] mx-auto">
+        <div className="max-w-[1550px] mx-auto">
           <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-dvh">
             <div className=" bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl min-h-[60dvh] w-[30%] ">
               <h3 id="status">Status: {status}</h3>
