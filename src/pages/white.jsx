@@ -31,7 +31,7 @@ export default function WhiteGame() {
       // const pusher = new Pusher('a4ad42bd9662f1406a19', {
       //   cluster: 'ap2'
       // });
-      socket = io("http://localhost:3001", {
+      socket = io("https://chess-site-server.onrender.com", {
         // path: "/socket.io", // Adjust if your backend uses a different path
         // withCredentials: true,
       });
