@@ -166,7 +166,7 @@ export default function Home() {
             <button 
               onClick={() => !isConnected? setIsModalOpen(true) : setIsModalOpen(false)}
               className={`
-                px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105
+                px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer
                 ${isConnected 
                   ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg shadow-green-500/25' 
                   : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25 hover:shadow-xl'
@@ -181,12 +181,12 @@ export default function Home() {
         {/* Wallet Selection Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md border border-white/10 shadow-2xl">
+            <div className="bg-white rounded-2xl p-8 w-full max-w-md border border-white/10 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">Select Demo Wallet</h2>
+                <h2 className="text-2xl font-bold text-black">Select Demo Wallet</h2>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors cursor-pointer"
                 >
                   ✕
                 </button>
@@ -196,7 +196,7 @@ export default function Home() {
                   <button
                     key={wallet.id}
                     onClick={() => connectFakeWallet(wallet)}
-                    className="w-full flex items-center space-x-4 p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all duration-300 transform hover:scale-105"
+                    className="w-full flex items-center space-x-4 p-4 text-black bg-black/5 hover:bg-black/10 rounded-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                   >
                     <span className="text-2xl">{wallet.icon}</span>
                     <span className="text-lg font-medium">{wallet.name}</span>
