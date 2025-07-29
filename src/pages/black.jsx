@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import Head from "next/head";
 import Script from "next/script";
 import io from "socket.io-client";
@@ -18,6 +18,7 @@ export default function BlackGame() {
   const boardInstanceRef = useRef(null);
   const [scriptsReady, setScriptsReady] = useState(false);
   const [capturedPieces, setCapturedPieces] = useState([]);
+  const searchParams = useSearchParams();
 
 
   // useEffect(() => {
@@ -135,12 +136,11 @@ export default function BlackGame() {
         router.push('/win?player1Bool=true');
       });
 
-      console.log("Socket initialized");
-      console.log("Game has started:", router.query.code);
+      const code = searchParams.get("code");
       // Join game with code from URL
-      if (router.query.code) {
+      if (code) {
         socket.emit('joinGame', {
-          code: router.query.code
+          code: code
         });
       }
 
