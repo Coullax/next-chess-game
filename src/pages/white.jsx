@@ -132,12 +132,13 @@ export default function WhiteGame() {
     const moveColor = gameRef.current.turn() === 'w' ? 'White' : 'Black';
     console.log("Current turn:", moveColor);
     if (gameRef.current.in_checkmate()) {
-      if (moveColor === 'Black') {
-        router.push('/win?player1Bool=true');
-      } else {
+      status = 'Game over, ' + moveColor + ' is in checkmate.';
+      // If it's black's turn and checkmate, black is losing
+      if (gameRef.current.turn() === 'w') {
         router.push('/lost');
+      } else {
+        router.push('/win?player1Bool=false');
       }
-      return;
     } else if (gameRef.current.in_draw()) {
       status = 'Game over, drawn position';
     } else if (!gameHasStarted) {

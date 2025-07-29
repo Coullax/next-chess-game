@@ -190,8 +190,14 @@ export default function BlackGame() {
     if (gameRef.current.turn() === 'b') moveColor = 'Black';
     if (gameRef.current.in_checkmate()) {
       status = 'Game over, ' + moveColor + ' is in checkmate.';
-      router.push('/win?player1Bool=false');
-    } else if (gameRef.current.in_draw()) {
+      // If it's black's turn and checkmate, black is losing
+      if (gameRef.current.turn() === 'b') {
+        router.push('/lost');
+      } else {
+        router.push('/win?player1Bool=false');
+      }
+    }
+    else if (gameRef.current.in_draw()) {
       status = 'Game over, drawn position';
     } else if (gameOver) {
       status = 'Opponent disconnected, you win!';
