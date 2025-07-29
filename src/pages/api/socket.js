@@ -1,8 +1,8 @@
-import { Server } from "socket.io";
+const { Server } = require("socket.io");
 
 let games = {};
 
-export default function SocketHandler(req, res) {
+function SocketHandler(req, res) {
   if (res.socket.server.io) {
     console.log("Socket Already Setup");
     res.end();
@@ -45,3 +45,5 @@ export default function SocketHandler(req, res) {
   console.log("Setting Up Socket.io");
   res.end();
 }
+
+module.exports = SocketHandler;
