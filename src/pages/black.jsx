@@ -17,67 +17,131 @@ export default function BlackGame() {
   const boardInstanceRef = useRef(null);
   const [scriptsReady, setScriptsReady] = useState(false);
 
+  // useEffect(() => {
+  //   if (!scriptsReady) return;
+  //   initializeGame();
+  //   return () => {
+  //     if (socket) {
+  //       socket.disconnect();
+  //     }
+  //   };
+  //   // eslint-disable-next-line
+  // }, [scriptsReady]);
+
   useEffect(() => {
     if (!scriptsReady) return;
-    initializeGame();
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-    // eslint-disable-next-line
-  }, [scriptsReady]);
 
-  const initializeGame = async () => {
-    await fetch("/api/socket");
-    socket = io();
-    debugger
+    const initializeGame = async () => {
+      await fetch("/api/socket");
+      socket = io();
 
-    // Initialize chess game
-    if (typeof window !== 'undefined' && window.Chess && window.Chessboard && boardRef.current) {
-      gameRef.current = new window.Chess();
-      const config = {
-        draggable: true,
-        position: 'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd,
-        pieceTheme: '/img/chesspieces/wikipedia/{piece}.png'
-      };
-      debugger
-      boardInstanceRef.current = window.Chessboard(boardRef.current, config);
-      boardInstanceRef.current.flip();
-      updateStatus();
-    }
-
-    // Socket event listeners
-    socket.on('newMove', function(move) {
-      if (gameRef.current) {
-        gameRef.current.move(move);
-        if (boardInstanceRef.current) {
-          boardInstanceRef.current.position(gameRef.current.fen());
-        }
+      // Initialize chess game
+      if (window.Chess && window.Chessboard && boardRef.current) {
+        gameRef.current = new window.Chess();
+        const config = {
+          draggable: true,
+          position: 'start',
+          onDragStart: onDragStart,
+          onDrop: onDrop,
+          onSnapEnd: onSnapEnd,
+          pieceTheme: '/img/chesspieces/wikipedia/{piece}.png'
+        };
+        boardInstanceRef.current = window.Chessboard(boardRef.current, config);
+        boardInstanceRef.current.flip();
         updateStatus();
       }
-    });
 
-    socket.on('startGame', function() {
-      setGameHasStarted(true);
-      updateStatus();
-    });
-
-    socket.on('gameOverDisconnect', function() {
-      setGameOver(true);
-      updateStatus();
-      router.push('/win?player1Bool=false');
-    });
-
-    if (router.query.code) {
-      socket.emit('joinGame', {
-        code: router.query.code
+      // Socket event listeners
+      socket.on('newMove', function(move) {
+        if (gameRef.current) {
+          gameRef.current.move(move);
+          if (boardInstanceRef.current) {
+            boardInstanceRef.current.position(gameRef.current.fen());
+          }
+          updateStatus();
+        }
       });
-    }
-  };
+
+      socket.on('startGame', function() {
+        console.log("Game started");
+        setGameHasStarted(true);
+        updateStatus();
+      });
+
+      socket.on('gameOverDisconnect', function() {
+        router.push('/win?player1Bool=true');
+      });
+
+      // Join game with code from URL
+      if (router.query.code) {
+        socket.emit('joinGame', {
+          code: router.query.code
+        });
+      }
+
+      return () => {
+        if (socket) {
+          socket.off('newMove');
+          socket.off('startGame');
+          socket.off('gameOverDisconnect');
+          socket.disconnect();
+        }
+      };
+    };
+
+    initializeGame();
+  }, [scriptsReady, router,gameHasStarted]);
+
+  // const initializeGame = async () => {
+  //   await fetch("/api/socket");
+  //   socket = io();
+  //   debugger
+
+  //   // Initialize chess game
+  //   if (typeof window !== 'undefined' && window.Chess && window.Chessboard && boardRef.current) {
+  //     gameRef.current = new window.Chess();
+  //     const config = {
+  //       draggable: true,
+  //       position: 'start',
+  //       onDragStart: onDragStart,
+  //       onDrop: onDrop,
+  //       onSnapEnd: onSnapEnd,
+  //       pieceTheme: '/img/chesspieces/wikipedia/{piece}.png'
+  //     };
+  //     debugger
+  //     boardInstanceRef.current = window.Chessboard(boardRef.current, config);
+  //     boardInstanceRef.current.flip();
+  //     updateStatus();
+  //   }
+
+  //   // Socket event listeners
+  //   socket.on('newMove', function(move) {
+  //     if (gameRef.current) {
+  //       gameRef.current.move(move);
+  //       if (boardInstanceRef.current) {
+  //         boardInstanceRef.current.position(gameRef.current.fen());
+  //       }
+  //       updateStatus();
+  //     }
+  //   });
+
+  //   socket.on('startGame', function() {
+  //     setGameHasStarted(true);
+  //     updateStatus();
+  //   });
+
+  //   socket.on('gameOverDisconnect', function() {
+  //     setGameOver(true);
+  //     updateStatus();
+  //     router.push('/win?player1Bool=false');
+  //   });
+
+  //   if (router.query.code) {
+  //     socket.emit('joinGame', {
+  //       code: router.query.code
+  //     });
+  //   }
+  // };
 
   const onDragStart = (source, piece, position, orientation) => {
     if (gameRef.current.game_over()) return false;
@@ -106,9 +170,12 @@ export default function BlackGame() {
   };
 
   const updateStatus = () => {
+    debugger
     if (!gameRef.current) return;
     var status = '';
     var moveColor = 'White';
+     console.log("Current turn:", moveColor);
+      console.log("Game has started:", gameHasStarted);
     if (gameRef.current.turn() === 'b') moveColor = 'Black';
     if (gameRef.current.in_checkmate()) {
       status = 'Game over, ' + moveColor + ' is in checkmate.';

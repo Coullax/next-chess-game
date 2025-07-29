@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 export default function Home() {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const [betAmount, setBetAmount] = useState("");
   const [gameCode, setGameCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
