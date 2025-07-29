@@ -25,11 +25,15 @@ export default function WhiteGame() {
 
     const initializeGame = async () => {
       // debugger
-      await fetch("/api/socket");
-      socket = io();
+      // await fetch("/api/socket");
+      // socket = io();
       // const pusher = new Pusher('a4ad42bd9662f1406a19', {
       //   cluster: 'ap2'
       // });
+      socket = io("https://chess-site-server.onrender.com", {
+        // path: "/socket.io", // Adjust if your backend uses a different path
+        // withCredentials: true,
+      });
 
       // Initialize chess game
       if (window.Chess && window.Chessboard && boardRef.current) {
