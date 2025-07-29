@@ -16,6 +16,8 @@ export default function BlackGame() {
   const gameRef = useRef(null);
   const boardInstanceRef = useRef(null);
   const [scriptsReady, setScriptsReady] = useState(false);
+  const [capturedPieces, setCapturedPieces] = useState([]);
+
 
   // useEffect(() => {
   //   if (!scriptsReady) return;
@@ -56,15 +58,7 @@ export default function BlackGame() {
         if (gameRef.current) {
           const executedMove = gameRef.current.move(move);
           if (executedMove && move.captured) {
-            const pieceNames = {
-              p: 'Pawn',
-              n: 'Knight',
-              b: 'Bishop',
-              r: 'Rook',
-              q: 'Queen',
-              k: 'King'
-            };
-            console.log(`Captured piece: ${pieceNames[move.captured]}`);
+            setCapturedPieces(prev => [...prev, move.captured]);
           }
           if (boardInstanceRef.current) {
             boardInstanceRef.current.position(gameRef.current.fen());
@@ -170,15 +164,15 @@ export default function BlackGame() {
     };
     var move = gameRef.current.move(theMove);
     if (move === null) return 'snapback';
-
+  
     socket.emit('move', {
       ...theMove,
       captured: move.captured || null
     });
-
+  
     updateStatus();
   };
-
+  
 
   const onSnapEnd = () => {
     if (boardInstanceRef.current && gameRef.current) {
@@ -249,6 +243,19 @@ export default function BlackGame() {
                 ref={boardRef}
                 style={{ width: "100%", margin: "auto" }}
               ></div>
+                {/* Captured queue */}
+                {capturedPieces.length > 0 && (
+                    <div style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        {capturedPieces.map((piece, index) => (
+                            <img
+                                key={index}
+                                src={`/img/chesspieces/wikipedia/b${piece}.png`}
+                                alt={`Captured ${piece}`}
+                                style={{ width: '50px', height: '50px' }}
+                            />
+                        ))}
+                    </div>
+                )}
             </main>
             <div className=" bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl min-h-[60dvh] w-[30%]">
               <h5>PGN:</h5>
@@ -271,4 +278,4 @@ export default function BlackGame() {
       </div>
     </>
   );
-}
+} 
