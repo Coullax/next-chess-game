@@ -35,7 +35,7 @@ export default function BlackGame() {
     if (!scriptsReady) return;
 
     const initializeGame = async () => {
-      await fetch("/api/pusher");
+      await fetch("/api/socket");
       socket = io();
       // const pusher = new Pusher('a4ad42bd9662f1406a19', {
       //   cluster: 'ap2'

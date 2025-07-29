@@ -25,7 +25,7 @@ export default function WhiteGame() {
 
     const initializeGame = async () => {
       // debugger
-      await fetch("/api/pusher");
+      await fetch("/api/socket");
       socket = io();
       // const pusher = new Pusher('a4ad42bd9662f1406a19', {
       //   cluster: 'ap2'
