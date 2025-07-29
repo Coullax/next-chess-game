@@ -48,9 +48,9 @@ export default function WhiteGame() {
       }
 
             // Join channel based on game code from URL
-      const gameCode = router.query.code;
-      if (gameCode) {
-        const channel = pusher.subscribe(gameCode);
+      // const gameCode = router.query.code;
+      // if (gameCode) {
+        const channel = pusher.subscribe('chess-game');
 
         // Pusher event listeners
         channel.bind("newMove", (move) => {
@@ -82,7 +82,7 @@ export default function WhiteGame() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ event: "joinGame", data: { code: gameCode }, channel: gameCode }),
         });
-      }
+      // }
 
       return () => {
         if (gameCode && channel) {
@@ -242,7 +242,7 @@ export default function WhiteGame() {
                 <span className="text-2xl">♚</span>
               </div>
               <h1 className="uppercase text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
-                RCA
+                Royal Chess Arena
               </h1>
             </div>
             <h1 className=" uppercase text-2xl md:text-3xl font-bold">

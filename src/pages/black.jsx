@@ -58,9 +58,9 @@ export default function BlackGame() {
       }
 
       // Join channel based on game code from URL
-      const gameCode = router.query.code;
-      if (gameCode) {
-        const channel = pusher.subscribe(gameCode);
+      // const gameCode = router.query.code;
+      // if (gameCode) {
+        const channel = pusher.subscribe('chess-game');
 
         // Pusher event listeners
         channel.bind("newMove", (move) => {
@@ -94,7 +94,7 @@ export default function BlackGame() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ event: "joinGame", data: { code: gameCode }, channel: gameCode }),
         });
-      }
+      // }
 
       return () => {
         if (gameCode && channel) {
