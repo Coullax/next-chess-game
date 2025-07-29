@@ -142,7 +142,7 @@ export default function WhiteGame() {
     };
 
     initializeGame();
-  }, [scriptsReady, router, gameHasStarted,gameRef]);
+  }, [scriptsReady, router, gameHasStarted]);
 
   const onDragStart = (source, piece) => {
     if (!gameRef.current || gameRef.current.game_over()) return false;

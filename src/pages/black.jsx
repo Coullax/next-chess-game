@@ -152,7 +152,7 @@ export default function BlackGame() {
     };
 
     initializeGame();
-  }, [scriptsReady, router,gameHasStarted,gameRef]);
+  }, [scriptsReady, router,gameHasStarted]);
 
   // const initializeGame = async () => {
   //   await fetch("/api/socket");
