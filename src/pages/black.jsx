@@ -58,7 +58,7 @@ export default function BlackGame() {
       }
 
       // Join channel based on game code from URL
-      // const gameCode = router.query.code;
+      const gameCode = router.query.code;
       // if (gameCode) {
         const channel = pusher.subscribe('chess-game');
 
