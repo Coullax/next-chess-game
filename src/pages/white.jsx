@@ -80,7 +80,7 @@ export default function WhiteGame() {
         await fetch("/api/pusher", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ event: "joinGame", data: { code: gameCode }, channel: gameCode }),
+          body: JSON.stringify({ event: "joinGame", data: { code: router.query.code }, channel: 'chess-game' }),
         });
       // }
 
