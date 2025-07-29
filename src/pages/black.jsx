@@ -54,7 +54,18 @@ export default function BlackGame() {
       // Socket event listeners
       socket.on('newMove', function(move) {
         if (gameRef.current) {
-          gameRef.current.move(move);
+          const executedMove = gameRef.current.move(move);
+          if (executedMove && move.captured) {
+            const pieceNames = {
+              p: 'Pawn',
+              n: 'Knight',
+              b: 'Bishop',
+              r: 'Rook',
+              q: 'Queen',
+              k: 'King'
+            };
+            console.log(`Captured piece: ${pieceNames[move.captured]}`);
+          }
           if (boardInstanceRef.current) {
             boardInstanceRef.current.position(gameRef.current.fen());
           }
@@ -159,9 +170,15 @@ export default function BlackGame() {
     };
     var move = gameRef.current.move(theMove);
     if (move === null) return 'snapback';
-    socket.emit('move', theMove);
+  
+    socket.emit('move', {
+      ...theMove,
+      captured: move.captured || null
+    });
+  
     updateStatus();
   };
+  
 
   const onSnapEnd = () => {
     if (boardInstanceRef.current && gameRef.current) {
@@ -170,7 +187,7 @@ export default function BlackGame() {
   };
 
   const updateStatus = () => {
-    debugger
+    // debugger
     if (!gameRef.current) return;
     var status = '';
     var moveColor = 'White';
