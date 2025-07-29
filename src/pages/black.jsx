@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Script from "next/script";
 import io from "socket.io-client";
+import Pusher from "pusher-js";
 
 let socket;
 
@@ -34,8 +35,11 @@ export default function BlackGame() {
     if (!scriptsReady) return;
 
     const initializeGame = async () => {
-      await fetch("/api/socket");
-      socket = io();
+      // await fetch("/api/pusher");
+      // socket = io();
+      const pusher = new Pusher('a4ad42bd9662f1406a19', {
+        cluster: 'ap2'
+      });
 
       // Initialize chess game
       if (window.Chess && window.Chessboard && boardRef.current) {
@@ -53,45 +57,94 @@ export default function BlackGame() {
         updateStatus();
       }
 
-      // Socket event listeners
-      socket.on('newMove', function(move) {
-        if (gameRef.current) {
-          const executedMove = gameRef.current.move(move);
-          if (executedMove && move.captured) {
-            setCapturedPieces(prev => [...prev, move.captured]);
+      // Join channel based on game code from URL
+      const gameCode = router.query.code;
+      if (gameCode) {
+        const channel = pusher.subscribe(gameCode);
+
+        // Pusher event listeners
+        channel.bind("newMove", (move) => {
+          if (gameRef.current) {
+            const executedMove = gameRef.current.move(move);
+            if (executedMove && move.captured) {
+              setCapturedPieces((prev) => [...prev, move.captured]);
+            }
+            if (boardInstanceRef.current) {
+              boardInstanceRef.current.position(gameRef.current.fen());
+            }
+            updateStatus();
           }
-          if (boardInstanceRef.current) {
-            boardInstanceRef.current.position(gameRef.current.fen());
-          }
+        });
+
+        channel.bind("startGame", () => {
+          console.log("Game started");
+          setGameHasStarted(true);
           updateStatus();
-        }
-      });
+        });
 
-      socket.on('startGame', function() {
-        console.log("Game started");
-        setGameHasStarted(true);
-        updateStatus();
-      });
+        channel.bind("gameOverDisconnect", () => {
+          setGameOver(true);
+          updateStatus();
+          router.push("/win?player1Bool=false");
+        });
 
-      socket.on('gameOverDisconnect', function() {
-        router.push('/win?player1Bool=true');
-      });
-
-      // Join game with code from URL
-      if (router.query.code) {
-        socket.emit('joinGame', {
-          code: router.query.code
+        // Trigger joinGame event via API
+        await fetch("/api/pusher", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event: "joinGame", data: { code: gameCode }, channel: gameCode }),
         });
       }
 
       return () => {
-        if (socket) {
-          socket.off('newMove');
-          socket.off('startGame');
-          socket.off('gameOverDisconnect');
-          socket.disconnect();
+        if (gameCode && channel) {
+          channel.unbind("newMove");
+          channel.unbind("startGame");
+          channel.unbind("gameOverDisconnect");
+          channel.unsubscribe();
+          pusher.disconnect(); // Optional, depending on app lifecycle
         }
       };
+
+      // Socket event listeners
+      // socket.on('newMove', function(move) {
+      //   if (gameRef.current) {
+      //     const executedMove = gameRef.current.move(move);
+      //     if (executedMove && move.captured) {
+      //       setCapturedPieces(prev => [...prev, move.captured]);
+      //     }
+      //     if (boardInstanceRef.current) {
+      //       boardInstanceRef.current.position(gameRef.current.fen());
+      //     }
+      //     updateStatus();
+      //   }
+      // });
+
+      // socket.on('startGame', function() {
+      //   console.log("Game started");
+      //   setGameHasStarted(true);
+      //   updateStatus();
+      // });
+
+      // socket.on('gameOverDisconnect', function() {
+      //   router.push('/win?player1Bool=true');
+      // });
+
+      // // Join game with code from URL
+      // if (router.query.code) {
+      //   socket.emit('joinGame', {
+      //     code: router.query.code
+      //   });
+      // }
+
+      // return () => {
+      //   if (socket) {
+      //     socket.off('newMove');
+      //     socket.off('startGame');
+      //     socket.off('gameOverDisconnect');
+      //     socket.disconnect();
+      //   }
+      // };
     };
 
     initializeGame();
@@ -165,10 +218,21 @@ export default function BlackGame() {
     var move = gameRef.current.move(theMove);
     if (move === null) return 'snapback';
   
-    socket.emit('move', {
-      ...theMove,
-      captured: move.captured || null
+    fetch("/api/pusher", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event: "move",
+        data: { ...theMove, captured: move.captured || null },
+        channel: router.query.code, // Ensure router is available in scope
+      }),
+    }).then(() => {
+      updateStatus();
     });
+    // socket.emit('move', {
+    //   ...theMove,
+    //   captured: move.captured || null
+    // });
   
     updateStatus();
   };

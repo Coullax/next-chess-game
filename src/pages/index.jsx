@@ -159,7 +159,7 @@ export default function Home() {
                 <span className="text-2xl">♚</span>
               </div>
               <h1 className="uppercase text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
-                RCA
+                Royal Chess Arena
               </h1>
             </div>
             
