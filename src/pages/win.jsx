@@ -8,23 +8,23 @@ export default function WinPage() {
 
   useEffect(() => {
     if (router.query.player1Bool !== undefined) {
-      setPlayer1Bool(router.query.player1Bool === 'true');
+      setPlayer1Bool(router.query.player1Bool === "true");
     }
   }, [router.query]);
 
   const claimWinningBet = async () => {
     try {
-      if (typeof window === 'undefined' || !window.ethereum) {
+      if (typeof window === "undefined" || !window.ethereum) {
         alert("Please install MetaMask");
         return;
       }
 
-      const response = await fetch('/contract/abi.json');
+      const response = await fetch("/contract/abi.json");
       const ABI = await response.json();
-      const Address = '0x6996b280785d92fd957B77D623E455ABdFfBF2D6';
+      const Address = "0x6996b280785d92fd957B77D623E455ABdFfBF2D6";
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      
+
       const contract = new ethers.Contract(Address, ABI, signer);
 
       const getGameId = await contract.numGames();
@@ -36,7 +36,7 @@ export default function WinPage() {
       console.log("Game win:", win);
 
       if (win) {
-        router.push('/');
+        router.push("/");
       }
     } catch (error) {
       console.error("Error claiming winning bet:", error);
@@ -47,9 +47,15 @@ export default function WinPage() {
     <>
       <Head>
         <title>Congratulations! You Win!</title>
-        <meta name="description" content="Congratulations on winning the chess game!" />
+        <meta
+          name="description"
+          content="Congratulations on winning the chess game!"
+        />
         <link rel="icon" href="/favicon.ico" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+        />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.5.0/web3.min.js"></script>
@@ -97,7 +103,7 @@ export default function WinPage() {
             animation-duration: 1s;
             animation-delay: 4120ms;
           }
-          
+
           @keyframes turi {
             from {
               transform: translate(-50%, -50%) scale(0);
@@ -106,26 +112,26 @@ export default function WinPage() {
               transform: translate(-50%, -50%) scale(1);
             }
           }
-          
+
           .f-day {
             z-index: -1;
             width: 300px;
             height: 300px;
             position: absolute;
           }
-          
+
           .day-one {
             top: 20%;
             left: 7rem;
             transform: translate(-50%, -50%);
           }
-          
+
           .day-two {
             top: 20%;
             left: 18rem;
             transform: translate(-50%, -50%);
           }
-          
+
           .tuturi {
             width: 300px;
             height: 300px;
@@ -133,7 +139,7 @@ export default function WinPage() {
             top: 10%;
             left: 0;
           }
-          
+
           .tuturi-2 {
             left: auto;
             right: 0;
@@ -155,7 +161,7 @@ export default function WinPage() {
             animation-delay: 16000ms;
             transform: rotateY(0);
           }
-          
+
           @keyframes flipc {
             from {
               transform: rotateY(0);
@@ -164,39 +170,46 @@ export default function WinPage() {
               transform: rotateY(360deg);
             }
           }
-          
+
           .year {
             width: 230px;
           }
-          
+
           .date-no:last-child {
             margin-right: 0;
           }
         `}</style>
       </Head>
 
-      <div className="d-flex h-100 text-center text-bg-dark bg-dark">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
           <div className="row g-3 align-items-center justify-content-center mt-5">
-            <lottie-player 
-              src="https://assets3.lottiefiles.com/packages/lf20_5hufvwkz.json" 
+            <lottie-player
+              src="https://assets3.lottiefiles.com/packages/lf20_5hufvwkz.json"
               background="transparent"
-              speed="1" 
-              className="lottie-firework" 
-              loop 
-              autoplay 
-              style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}
+              speed="1"
+              className="lottie-firework"
+              loop
+              autoplay
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 1,
+              }}
             />
 
-            <div className="d-flex justify-content-center align-items-center position-relative">
-              <div>
+            <div className=" relative">
+              <div className=" flex h-[90dvh] flex-col justify-center items-center">
                 <div className="mb-4 text-center">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="text-success" 
-                    width="75" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="text-success"
+                    width="75"
                     height="75"
-                    fill="currentColor" 
+                    fill="currentColor"
                     viewBox="0 0 16 16"
                   >
                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
@@ -205,24 +218,32 @@ export default function WinPage() {
                 <div className="text-center">
                   <h1>Congratulations, You Win!</h1>
                 </div>
+                <div className="col-auto mt-5">
+                  <button
+                    onClick={claimWinningBet}
+                    className="btn btn-lg btn-light fw-bold border-white bg-white"
+                  >
+                    Claim Winning Bet
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="col-auto mt-5">
-              <button 
-                onClick={claimWinningBet}
-                className="btn btn-lg btn-light fw-bold border-white bg-white"
-              >
-                Claim Winning Bet
-              </button>
-            </div>
           </div>
-          
-          <footer className="mt-auto text-white-50">
-            <p>© 2024 <a href="https://coullax.com/" className="text-white">Coullax</a> All Rights Reserved.</p>
+
+          <footer className="p-6 text-center absolute bottom-0 left-0 right-0">
+            <p className="text-gray-400">
+              © 2024{" "}
+              <a
+                href="https://coullax.com/"
+                className="text-purple-400 hover:text-purple-300 transition-colors"
+              >
+                Coullax
+              </a>{" "}
+              All Rights Reserved.
+            </p>
           </footer>
         </div>
       </div>
     </>
   );
-} 
+}
