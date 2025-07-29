@@ -21,7 +21,7 @@ export default function WhiteGame() {
     if (!scriptsReady) return;
 
     const initializeGame = async () => {
-      debugger
+      // debugger
       await fetch("/api/socket");
       socket = io();
 
@@ -44,16 +44,28 @@ export default function WhiteGame() {
       // Socket event listeners
       socket.on('newMove', function(move) {
         if (gameRef.current) {
-          gameRef.current.move(move);
+          const executedMove = gameRef.current.move(move);
+          if (executedMove && move.captured) {
+            const pieceNames = {
+              p: 'Pawn',
+              n: 'Knight',
+              b: 'Bishop',
+              r: 'Rook',
+              q: 'Queen',
+              k: 'King'
+            };
+            console.log(`Captured piece: ${pieceNames[move.captured]}`);
+          }
           if (boardInstanceRef.current) {
             boardInstanceRef.current.position(gameRef.current.fen());
           }
           updateStatus();
         }
       });
+      
 
       socket.on('startGame', function() {
-        debugger
+        // debugger
         console.log("Game started");
         setGameHasStarted(true);
         updateStatus();
@@ -95,20 +107,22 @@ export default function WhiteGame() {
   };
 
   const onDrop = (source, target) => {
-    if (!gameRef.current) return 'snapback';
-    
-    const move = gameRef.current.move({
+    let theMove = {
       from: source,
       to: target,
       promotion: 'q'
-    });
-
+    };
+    var move = gameRef.current.move(theMove);
     if (move === null) return 'snapback';
-    
-    socket.emit('move', move);
+  
+    socket.emit('move', {
+      ...theMove,
+      captured: move.captured || null
+    });
+  
     updateStatus();
-    return move;
   };
+  
 
   const onSnapEnd = () => {
     if (boardInstanceRef.current && gameRef.current) {
@@ -117,7 +131,7 @@ export default function WhiteGame() {
   };
 
   const updateStatus = () => {
-    debugger
+    // debugger
     if (!gameRef.current) return;
     
     let status = '';
