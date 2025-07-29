@@ -40,7 +40,7 @@ export default function BlackGame() {
       // const pusher = new Pusher('a4ad42bd9662f1406a19', {
       //   cluster: 'ap2'
       // });
-      socket = io("https://chess-site-server.onrender.com", {
+      socket = io("http://localhost:3001", {
         // path: "/socket.io", // Adjust if your backend uses a different path
         // withCredentials: true,
       });
@@ -112,6 +112,7 @@ export default function BlackGame() {
 
       // Socket event listeners
       socket.on('newMove', function(move) {
+        debugger
         if (gameRef.current) {
           const executedMove = gameRef.current.move(move);
           if (executedMove && move.captured) {
@@ -134,6 +135,8 @@ export default function BlackGame() {
         router.push('/win?player1Bool=true');
       });
 
+      console.log("Socket initialized");
+      console.log("Game has started:", router.query.code);
       // Join game with code from URL
       if (router.query.code) {
         socket.emit('joinGame', {
@@ -222,21 +225,21 @@ export default function BlackGame() {
     var move = gameRef.current.move(theMove);
     if (move === null) return 'snapback';
   
-    fetch("/api/pusher", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        event: "move",
-        data: { ...theMove, captured: move.captured || null },
-        channel: router.query.code, // Ensure router is available in scope
-      }),
-    }).then(() => {
-      updateStatus();
-    });
-    // socket.emit('move', {
-    //   ...theMove,
-    //   captured: move.captured || null
+    // fetch("/api/pusher", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     event: "move",
+    //     data: { ...theMove, captured: move.captured || null },
+    //     channel: router.query.code, // Ensure router is available in scope
+    //   }),
+    // }).then(() => {
+    //   updateStatus();
     // });
+    socket.emit('move', {
+      ...theMove,
+      captured: move.captured || null
+    });
   
     updateStatus();
   };
