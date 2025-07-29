@@ -62,7 +62,7 @@ export default function WhiteGame() {
           updateStatus();
         }
       });
-      
+
 
       socket.on('startGame', function() {
         // debugger
@@ -114,15 +114,15 @@ export default function WhiteGame() {
     };
     var move = gameRef.current.move(theMove);
     if (move === null) return 'snapback';
-  
+
     socket.emit('move', {
       ...theMove,
       captured: move.captured || null
     });
-  
+
     updateStatus();
   };
-  
+
 
   const onSnapEnd = () => {
     if (boardInstanceRef.current && gameRef.current) {
@@ -167,43 +167,47 @@ export default function WhiteGame() {
         <link rel="icon" href="/favicon.ico" />
         <link href="/css/chessboard-1.0.0.min.css" rel="stylesheet" />
       </Head>
-      
-      <Script 
-        src="/js/jquery-3.7.0.min.js" 
-        strategy="beforeInteractive" 
-      />
-      <Script 
-        src="/js/chess-0.10.3.min.js" 
-        strategy="beforeInteractive" 
-      />
-      <Script 
-        src="/js/chessboard-1.0.0.min.js" 
-        strategy="beforeInteractive" 
+
+      <Script src="/js/jquery-3.7.0.min.js" strategy="beforeInteractive" />
+      <Script src="/js/chess-0.10.3.min.js" strategy="beforeInteractive" />
+      <Script
+        src="/js/chessboard-1.0.0.min.js"
+        strategy="beforeInteractive"
         onLoad={() => setScriptsReady(true)}
       />
-      
-      <div className="d-flex h-100 text-center text-bg-dark bg-dark">
-        <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-          <div>
-            <h3>Status:</h3>
-            <h3 id="status">{status}</h3>
+
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
+        <div className="max-w-[1800px] mx-auto">
+          <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-dvh">
+            <div className=" bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl min-h-[60dvh] w-[30%] ">
+              <h3 id="status">Status: {status}</h3>
+              {/* <h3 id="status"></h3> */}
+            </div>
+
+            <main className=" p-8 h-[65dvh] aspect-square mx-auto">
+              <div
+                id="myBoard"
+                ref={boardRef}
+                style={{ width: "100%", margin: "auto" }}
+              ></div>
+            </main>
+
+            <div className=" bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl min-h-[60dvh] w-[30%]">
+              <h5>PGN:</h5>
+              <h5 id="pgn">{pgn}</h5>
+            </div>
           </div>
-          
-          <main className="px-3">
-            <div 
-              id="myBoard" 
-              ref={boardRef} 
-              style={{ width: '100%', maxWidth: '700px', margin: 'auto' }}
-            ></div>
-          </main>
-          
-          <div>
-            <h5>PGN:</h5>
-            <h5 id="pgn">{pgn}</h5>
-          </div>
-          
-          <footer className="mt-auto text-white-50">
-            <p>© 2024 <a href="https://coullax.com/" className="text-white">Coullax</a> All Rights Reserved.</p>
+          <footer className="p-6 text-center absolute bottom-0 left-0 right-0">
+            <p className="text-gray-400">
+              © 2024{" "}
+              <a
+                href="https://coullax.com/"
+                className="text-purple-400 hover:text-purple-300 transition-colors"
+              >
+                Coullax
+              </a>{" "}
+              All Rights Reserved.
+            </p>
           </footer>
         </div>
       </div>
