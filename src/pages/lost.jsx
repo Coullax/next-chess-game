@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
+import Image from "next/image";
 
 export default function LostPage() {
   const router = useRouter();
@@ -19,18 +20,19 @@ export default function LostPage() {
         <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
       </Head>
 
-      <div className="d-flex h-100 text-center text-bg-dark bg-dark">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <div className="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-          <div className="row g-3 align-items-center justify-content-center mt-5">
-            <dotlottie-player 
+          <div className=" flex flex-col items-center justify-center mt-5 h-[90dvh]">
+            {/* <dotlottie-player 
               src="https://lottie.host/614cc155-cfb0-4c31-8a5c-11252c0d6f17/T3oYRhYHCr.json" 
               background="transparent" 
               speed="1" 
-              style={{ width: '300px', height: '300px' }} 
+              style={{ width: '100px', height: '100px' }} 
               loop 
               autoplay
-            />
-            
+            /> */}
+            <Image src={'/warn.png'} alt="Warning" width={100} height={100} className=" mb-3" />
+
             <div className="d-flex justify-content-center align-items-center position-relative">
               <div>
                 <div className="text-center">
@@ -49,8 +51,17 @@ export default function LostPage() {
             </div>
           </div>
           
-          <footer className="mt-auto text-white-50">
-            <p>© 2024 <a href="https://coullax.com/" className="text-white">Coullax</a> All Rights Reserved.</p>
+          <footer className="p-6 text-center absolute bottom-0 left-0 right-0">
+            <p className="text-gray-400">
+              © 2024{" "}
+              <a
+                href="https://coullax.com/"
+                className="text-purple-400 hover:text-purple-300 transition-colors"
+              >
+                Coullax
+              </a>{" "}
+              All Rights Reserved.
+            </p>
           </footer>
         </div>
       </div>
