@@ -2,30 +2,64 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [betAmount, setBetAmount] = useState("");
   const [gameCode, setGameCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showCover, setShowCover] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fakeTokens, setFakeTokens] = useState(0);
+  const [selectedWallet, setSelectedWallet] = useState(null);
+
   const router = useRouter();
+
+  const fakeWallets = [
+    { id: 1, name: "Demo Wallet 1", icon: "🪙" },
+    { id: 2, name: "Demo Wallet 2", icon: "💰" },
+    { id: 3, name: "Demo Wallet 3", icon: "💸" },
+  ];
+
   useEffect(() => {
-    checkWalletConnection();
+    const storedWallet = sessionStorage.getItem("selectedWallet");
+    const storedTokens = sessionStorage.getItem("fakeTokens");
+    if (storedWallet) {
+      setSelectedWallet(JSON.parse(storedWallet));  
+      setFakeTokens(parseInt(storedTokens, 10));
+      setIsConnected(true); 
+      setShowCover(false);
+    }
+    // checkWalletConnection();
   }, []);
 
-  const checkWalletConnection = async () => {
-    if (typeof window !== 'undefined' && window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accounts.length > 0) {
-          setIsConnected(true);
-          setShowCover(false);
-        }
-      } catch (error) {
-        console.error("Error checking wallet connection:", error);
-      }
+  const connectFakeWallet = (wallet) => {
+    if (!isConnected) {
+      setSelectedWallet(wallet);
+      setFakeTokens(1000);
+      setIsConnected(true);
+      setShowCover(false);
+      setIsModalOpen(false);
+      sessionStorage.setItem("selectedWallet", JSON.stringify(wallet));
+      sessionStorage.setItem("fakeTokens", 1000);
     }
+
   };
+
+
+
+  // const checkWalletConnection = async () => {
+  //   if (typeof window !== 'undefined' && window.ethereum) {
+  //     try {
+  //       const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+  //       if (accounts.length > 0) {
+  //         setIsConnected(true);
+  //         setShowCover(false);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking wallet connection:", error);
+  //     }
+  //   }
+  // };
 
   const connectWallet = async () => {
     if (typeof window === 'undefined' || !window.ethereum) {
@@ -126,33 +160,55 @@ export default function Home() {
               </div>
               <h1 className="uppercase text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
                 RCA
-
               </h1>
             </div>
             
             <button 
-              onClick={connectWallet}
-              disabled={isLoading}
+              onClick={() => !isConnected? setIsModalOpen(true) : setIsModalOpen(false)}
               className={`
                 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105
                 ${isConnected 
                   ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg shadow-green-500/25' 
-                  : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25'
+                  : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25 hover:shadow-xl'
                 }
-                ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-xl'}
               `}
             >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Connecting...</span>
-                </div>
-              ) : (
-                isConnected ? "✓ Connected" : "Connect Wallet"
-              )}
+              {isConnected ? `✓ ${selectedWallet?.name || 'Connected'} (${fakeTokens} Tokens)` : "Connect Wallet"}
             </button>
           </div>
         </header>
+
+        {/* Wallet Selection Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 w-full max-w-md border border-white/10 shadow-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Select Demo Wallet</h2>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-4">
+                {fakeWallets.map((wallet) => (
+                  <button
+                    key={wallet.id}
+                    onClick={() => connectFakeWallet(wallet)}
+                    className="w-full flex items-center space-x-4 p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all duration-300 transform hover:scale-105"
+                  >
+                    <span className="text-2xl">{wallet.icon}</span>
+                    <span className="text-lg font-medium">{wallet.name}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-6 text-sm text-gray-400 text-center">
+                Select a demo wallet to receive 1000 fake tokens
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <main className="flex-1 flex items-center justify-center p-6">
@@ -169,7 +225,7 @@ export default function Home() {
                   Royal Chess Arena
                 </h2>
                 <p className="text-xl text-gray-300 mb-8">
-                  Play chess on the blockchain with real stakes
+                  Play chess with demo tokens
                 </p>
               </div>
             )}
@@ -181,20 +237,21 @@ export default function Home() {
                     <div className="text-6xl mb-4 animate-bounce-slow">♚</div>
                     <h3 className="text-2xl font-bold mb-2">Ready to Play</h3>
                     <p className="text-gray-300">Create a new game or join an existing one</p>
+                    <p className="text-gray-400 mt-2">Available Tokens: {fakeTokens}</p>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6 mb-8">
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-gray-300">
-                        Bet Amount (USD)
+                        Bet Amount (Tokens)
                       </label>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <span className="text-yellow-400">$</span>
+                          <span className="text-yellow-400">🪙</span>
                         </div>
                         <input 
                           className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
-                          type="text" 
+                          type="number" 
                           placeholder="Enter bet amount"
                           value={betAmount}
                           onChange={(e) => setBetAmount(e.target.value)}
