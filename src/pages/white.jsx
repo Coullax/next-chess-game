@@ -19,8 +19,8 @@ export default function WhiteGame() {
   const [scriptsReady, setScriptsReady] = useState(false);
   const [capturedPieces, setCapturedPieces] = useState([]);
   const searchParams = useSearchParams();
-  const [whiteTime, setWhiteTime] = useState(60); // 30 minutes in seconds
-  const [blackTime, setBlackTime] = useState(60); // 30 minutes in seconds
+  const [whiteTime, setWhiteTime] = useState(1800); // 30 minutes in seconds
+  const [blackTime, setBlackTime] = useState(1800); // 30 minutes in seconds
   useEffect(() => {
     if (!gameHasStarted || gameRef.current?.game_over()) return;
   

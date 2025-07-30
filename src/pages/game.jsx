@@ -26,8 +26,8 @@ export default function ChessGame() {
   const [betAmount, setBetAmount] = useState(0);
   const [opponentLeft, setOpponentLeft] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
-  const [whiteTime, setWhiteTime] = useState(60); // 30 minutes in seconds
-const [blackTime, setBlackTime] = useState(60); // 30 minutes in seconds
+  const [whiteTime, setWhiteTime] = useState(1800); // 30 minutes in seconds
+const [blackTime, setBlackTime] = useState(1800); // 30 minutes in seconds
 
 
 useEffect(() => {
