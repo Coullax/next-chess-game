@@ -259,6 +259,7 @@ export default function ChessGame() {
         <meta name="description" content={`Play chess as ${playerColor}`} />
         <link rel="icon" href="/favicon.ico" />
         <link href="/css/chessboard-1.0.0.min.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js" />
       </Head>
       <Script
         src="/js/jquery-3.7.0.min.js"
