@@ -777,9 +777,10 @@ const formatTime = (seconds) => {
                 height="53"
                 src="https://img.icons8.com/external-vectorslab-flat-vectorslab/53/external-Dollar-Coins-casino-vectorslab-flat-vectorslab.png"
                 alt="external-Dollar-Coins-casino-vectorslab-flat-vectorslab"
-                className="inline-block"
+                className="inline-block mr-3"
               />
-              <span className="inline-block ml-3">{betAmount * 2} Coins</span>
+
+              <span className="text-white"> Winner Will Receive : </span><span className="inline-block ml-3"> {betAmount * 2} Coins</span>
             </div>
             <div className="min-h-[45vh] w-[30%]">
               {/* <h3
@@ -845,7 +846,7 @@ const formatTime = (seconds) => {
                 ref={boardRef}
                 style={{ width: "100%", margin: "auto" }}
               ></div>
-              {capturedPieces.length > 0 && (
+              {/* {capturedPieces.length > 0 && (
                 <div
                   style={{
                     marginBottom: playerColor === "white" ? "20px" : "0",
@@ -866,7 +867,7 @@ const formatTime = (seconds) => {
                     />
                   ))}
                 </div>
-              )}
+              )} */}
             </main>
             <div className="min-h-[45vh] w-[30%]">
             <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
@@ -880,26 +881,27 @@ const formatTime = (seconds) => {
                 <div className=" mt-3">
                   <h3
                     id="status"
-                    className="w-full min-h-[4vh] px-4 py-3 text-white"
+                    className="w-full min-h-[4vh] py-3 text-white flex justify-start items-center"
                   >
-                    <img
+                    {/* <img
                       width="35"
                       height="35"
                       src="https://img.icons8.com/cotton/64/information--v2.png"
                       alt="information--v2"
                       className="inline-block"
-                    />
-                    <span className=" inline-block pl-3">{status}</span>
+                    /> */}
+                    <img width="25" height="25" src="https://img.icons8.com/flat-round/50/info.png" alt="info"   className="inline-block"/>
+                    <span className=" inline-block pl-3 text-xl uppercase">Status</span>
                   </h3>
                   {/* Debug info */}
-                  <div className="mt-2 text-xs text-gray-400">
+                  <div className="mt-2 text-lg text-gray-400">
                     <div>Scripts Ready: {scriptsReady ? "✓" : "✗"}</div>
-                    <div>Chess.js: {scriptsLoaded.chess ? "✓" : "✗"} (Required)</div>
+                    {/* <div>Chess.js: {scriptsLoaded.chess ? "✓" : "✗"} (Required)</div>
                     <div>Chessboard.js: {scriptsLoaded.chessboard ? "✓" : "✗"} (Required)</div>
-                    <div>jQuery: {scriptsLoaded.jquery ? "✓" : "✗"} (Optional)</div>
+                    <div>jQuery: {scriptsLoaded.jquery ? "✓" : "✗"} (Optional)</div> */}
                     <div>Game Started: {gameHasStarted ? "✓" : "✗"}</div>
                     <div>Game Over: {gameOver ? "✓" : "✗"}</div>
-                    <div>Player Color: <span className="text-yellow-300">{playerColor}</span></div>
+                    <div>Player Color: <span className="text-yellow-300 uppercase">{playerColor}</span></div>
                     <div>Current Turn: <span className="text-yellow-300">{gameRef.current?.turn() === "w" ? "White" : gameRef.current?.turn() === "b" ? "Black" : "N/A"}</span></div>
                     <div>Can I Move?: <span className="text-yellow-300">{
                       gameRef.current?.turn() === (playerColor === "white" ? "w" : "b") ? "✓ YES" : "✗ NO"
