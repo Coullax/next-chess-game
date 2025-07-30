@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Head from "next/head";
@@ -20,7 +19,6 @@ export default function WhiteGame() {
   const [capturedPieces, setCapturedPieces] = useState([]);
   const searchParams = useSearchParams();
 
-
   useEffect(() => {
     if (!scriptsReady) return;
 
@@ -41,13 +39,13 @@ export default function WhiteGame() {
         gameRef.current = new window.Chess();
         const config = {
           draggable: true,
-          position: 'start',
+          position: "start",
           onDragStart: onDragStart,
           onDrop: onDrop,
           onSnapEnd: onSnapEnd,
-          pieceTheme: '/img/chesspieces/wikipedia/{piece}.png'
+          pieceTheme: "/img/chesspieces/wikipedia/{piece}.png",
         };
-        
+
         boardInstanceRef.current = window.Chessboard(boardRef.current, config);
         updateStatus();
       }
@@ -243,7 +241,7 @@ export default function WhiteGame() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
           <div className="flex justify-between items-center max-w-[1550px] mx-auto">
-            <div className="flex items-center space-x-3">
+             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-2xl">♚</span>
               </div>
@@ -257,7 +255,7 @@ export default function WhiteGame() {
           </div>
         </header>
         <div className="max-w-[1550px] mx-auto">
-          <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-dvh">
+          <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-[90dvh]">
             <div className=" min-h-[60dvh] w-[30%] ">
               <h3
                 id="status"
@@ -277,18 +275,25 @@ export default function WhiteGame() {
                 ref={boardRef}
                 style={{ width: "100%", margin: "auto" }}
               ></div>
-                {capturedPieces.length > 0 && (
-                    <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                        {capturedPieces.map((piece, index) => (
-                            <img
-                                key={index}
-                                src={`/img/chesspieces/wikipedia/w${piece}.png`}
-                                alt={`Captured ${piece}`}
-                                style={{ width: '50px', height: '50px' }}
-                            />
-                        ))}
-                    </div>
-                )}
+              {capturedPieces.length > 0 && (
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    display: "flex",
+                    gap: "10px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {capturedPieces.map((piece, index) => (
+                    <img
+                      key={index}
+                      src={`/img/chesspieces/wikipedia/w${piece}.png`}
+                      alt={`Captured ${piece}`}
+                      style={{ width: "50px", height: "50px" }}
+                    />
+                  ))}
+                </div>
+              )}
             </main>
 
             <div className=" min-h-[60dvh] w-[30%]">
@@ -300,10 +305,7 @@ export default function WhiteGame() {
                   <div className=" h-3 rounded-full bg-green-100 aspect-square"></div>
                   <h3>Anonymous</h3>
                 </div>
-                <div>
-
-
-                </div>
+                <div></div>
               </div>
             </div>
           </div>
