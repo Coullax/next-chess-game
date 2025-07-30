@@ -15,10 +15,9 @@ export default function App({ Component, pageProps }) {
       <Script
         src="/js/jquery-3.7.0.min.js"
         strategy="beforeInteractive"
-        // onLoad={() => {
-        //   console.log("jQuery loaded");
-        //   setScriptsReady(false); // Reset to ensure next script waits
-        // }}
+        onLoad={() => {
+          console.log("jQuery loaded");
+        }}
         // onError={() => console.error("jQuery failed to load")}
       />
 
