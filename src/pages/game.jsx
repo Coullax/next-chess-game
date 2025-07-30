@@ -39,7 +39,7 @@ export default function ChessGame() {
         return;
       }
       const code = searchParams.get("code");
-      if (!code || code.length !== 3) {
+      if (!code ) {
         setStatus("Invalid game code");
         return;
       }
