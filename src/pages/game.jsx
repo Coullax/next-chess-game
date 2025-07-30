@@ -44,27 +44,32 @@ export default function ChessGame() {
         return;
       }
 
-        const betParam = searchParams.get("bet");
-        if (betParam && !isNaN(betParam)) {
-            setBetAmount(parseFloat(betParam));
-        } else {
-            setStatus("Invalid bet amount");
-            return;
-        }
+      const betParam = searchParams.get("bet");
+      if (betParam && !isNaN(betParam)) {
+        setBetAmount(parseInt(betParam));
+      } else {
+        setStatus("Invalid bet amount");
+        return;
+      }
 
       socket = io("https://chess-site-server.onrender.com", {
         reconnection: true,
         reconnectionAttempts: 5,
-        query: { code, color: playerColor }
+        query: { code, color: playerColor },
       });
 
       // Check all dependencies
-      if (!window.jQuery || !window.Chess || !window.Chessboard || !boardRef.current) {
+      if (
+        !window.jQuery ||
+        !window.Chess ||
+        !window.Chessboard ||
+        !boardRef.current
+      ) {
         console.error("Missing dependencies:", {
           jQuery: !!window.jQuery,
           Chess: !!window.Chess,
           Chessboard: !!window.Chessboard,
-          boardRef: !!boardRef.current
+          boardRef: !!boardRef.current,
         });
         setStatus("Failed to load game dependencies");
         return;
@@ -118,8 +123,8 @@ export default function ChessGame() {
         if (data.winnerColor !== playerColor && !gameOver) {
           setOpponentLeft(true);
           setGameOver(true);
-          setShowWinModal(true);
           updateStatus();
+          router.push(`/win?betAmount=${betAmount * 2}`);
         }
       });
 
@@ -148,20 +153,26 @@ export default function ChessGame() {
     initializeGame();
   }, [scriptsReady, router, playerColor]);
 
-//   const onDragStart = (source, piece, position, orientation) => {
-//     console.log("Drag attempt:", { source, piece, turn: gameRef.current?.turn(), playerColor, gameHasStarted, gameOver, isReconnecting });
-//     if (!gameRef.current || !boardInstanceRef.current || gameRef.current.game_over() || gameOver || !gameHasStarted || isReconnecting) {
-//       return false;
-//     }
-//     const isWhitePiece = piece.search(/^w/) !== -1;
-//     const isBlackPiece = piece.search(/^b/) !== -1;
-//     if ((playerColor === "white" && !isWhitePiece) || (playerColor === "black" && !isBlackPiece)) {
-//       return false;
-//     }
-//     return gameRef.current.turn() === (playerColor === "white" ? "w" : "b");
-//   };
+  //   const onDragStart = (source, piece, position, orientation) => {
+  //     console.log("Drag attempt:", { source, piece, turn: gameRef.current?.turn(), playerColor, gameHasStarted, gameOver, isReconnecting });
+  //     if (!gameRef.current || !boardInstanceRef.current || gameRef.current.game_over() || gameOver || !gameHasStarted || isReconnecting) {
+  //       return false;
+  //     }
+  //     const isWhitePiece = piece.search(/^w/) !== -1;
+  //     const isBlackPiece = piece.search(/^b/) !== -1;
+  //     if ((playerColor === "white" && !isWhitePiece) || (playerColor === "black" && !isBlackPiece)) {
+  //       return false;
+  //     }
+  //     return gameRef.current.turn() === (playerColor === "white" ? "w" : "b");
+  //   };
   const onDragStart = (source, piece) => {
-    console.log("Drag start:", source, piece, gameRef.current?.turn(), playerColor);
+    console.log(
+      "Drag start:",
+      source,
+      piece,
+      gameRef.current?.turn(),
+      playerColor
+    );
     if (!gameRef.current || gameRef.current.game_over()) return false;
     if (gameOver) return false;
 
@@ -194,9 +205,11 @@ export default function ChessGame() {
     if (gameRef.current.in_checkmate()) {
       setGameOver(true);
       if (gameRef.current.turn() !== (playerColor === "white" ? "w" : "b")) {
-        setShowWinModal(true);
+        // setShowWinModal(true);
+        router.push(`/win?betAmount=${betAmount * 2}`);
       } else {
-        setShowBadLuckModal(true);
+        // setShowBadLuckModal(true);
+        router.push("/lost");
       }
     } else if (gameRef.current.in_draw()) {
       setGameOver(true);
@@ -214,10 +227,13 @@ export default function ChessGame() {
     const moveColor = gameRef.current.turn() === "w" ? "White" : "Black";
     if (gameOver) {
       if (opponentLeft) status = "Opponent left, you win!";
-      else if (gameRef.current.in_checkmate()) status = `Game over, ${moveColor} is in checkmate.`;
+      else if (gameRef.current.in_checkmate())
+        status = `Game over, ${moveColor} is in checkmate.`;
       else if (gameRef.current.in_draw()) status = "Game over, drawn position";
     } else if (!gameHasStarted) {
-      status = `Waiting for ${playerColor === "white" ? "black" : "white"} to join`;
+      status = `Waiting for ${
+        playerColor === "white" ? "black" : "white"
+      } to join`;
     } else {
       status = `${moveColor} to move`;
       if (gameRef.current.in_check()) status += `, ${moveColor} is in check`;
@@ -263,7 +279,10 @@ export default function ChessGame() {
   return (
     <>
       <Head>
-        <title>Chess Game - {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)} Player</title>
+        <title>
+          Chess Game -{" "}
+          {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)} Player
+        </title>
         <meta name="description" content={`Play chess as ${playerColor}`} />
         <link rel="icon" href="/favicon.ico" />
         <link href="/css/chessboard-1.0.0.min.css" rel="stylesheet" />
