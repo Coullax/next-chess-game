@@ -44,7 +44,7 @@ export default function ChessGame() {
         return;
       }
 
-      socket = io("http://localhost:3001", { 
+      socket = io("https://chess-site-server.onrender.com", { 
         reconnection: true, 
         reconnectionAttempts: 5,
         query: { code, color: playerColor }
