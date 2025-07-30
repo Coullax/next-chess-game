@@ -301,7 +301,7 @@ export default function ChessGame() {
         strategy="beforeInteractive"
         onLoad={() => {
             console.log("Chessboard.js loaded");
-            setScriptsReady(false); // Reset again
+            setScriptsReady(true); // Reset again
         }}
         onError={() => console.error("Chessboard.js failed to load")}
         />
