@@ -353,10 +353,11 @@ const formatTime = (seconds) => {
 
       socketRef.current.on("opponentLeft", (data) => {
         const playerColor = gameParamsRef.current?.color?.toLowerCase();
-        if (data.winnerColor !== playerColor && !gameOver) {
+        if (data.winnerColor === playerColor && !gameOver) {
           setOpponentLeft(true);
           setGameOver(true);
           updateStatus();
+          socketRef.current.disconnect(); // Disconnect after opponent left
           router.push(`/win`);
         }
       });
