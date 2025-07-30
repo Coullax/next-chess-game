@@ -148,9 +148,10 @@ export default function Home() {
     }
     setErrorMessage("");
     try {
-      // Here you would integrate with your smart contract
-      console.log(`Creating game with code: ${gameCode}, bet: ${betAmount}`);
-      router.push(`/game?color=white&code=${gameCode}&bet=${betAmount}`);
+      // Generate a unique game code if one wasn't provided
+      const finalGameCode = gameCode || Math.random().toString(36).substring(2, 8).toUpperCase();
+      console.log(`Creating game with code: ${finalGameCode}, bet: ${betAmount}`);
+      router.push(`/game?color=white&code=${finalGameCode}&bet=${betAmount}`);
     } catch (error) {
       console.error("Error creating game:", error);
     }
