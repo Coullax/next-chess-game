@@ -44,8 +44,16 @@ export default function ChessGame() {
         return;
       }
 
-      socket = io("https://chess-site-server.onrender.com", { 
-        reconnection: true, 
+        const betParam = searchParams.get("bet");
+        if (betParam && !isNaN(betParam)) {
+            setBetAmount(parseFloat(betParam));
+        } else {
+            setStatus("Invalid bet amount");
+            return;
+        }
+
+      socket = io("https://chess-site-server.onrender.com", {
+        reconnection: true,
         reconnectionAttempts: 5,
         query: { code, color: playerColor }
       });
@@ -290,7 +298,7 @@ export default function ChessGame() {
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
-          <div className="flex justify-between items-center max-w-[1550px] mx-auto">
+          <div className="flex justify-between items-center max-w-7xl mx-auto">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-2xl">♚</span>
@@ -300,32 +308,103 @@ export default function ChessGame() {
               </h1>
             </div>
             <h1 className="uppercase text-2xl md:text-3xl font-bold">
-              {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)} Player
+              {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)}{" "}
+              Player
             </h1>
           </div>
         </header>
-        <div className="max-w-[1550px] mx-auto">
-          <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-dvh">
-            <div className="min-h-[60dvh] w-[30%]">
-              <h3
+        <div className="max-w-7xl mx-auto">
+          <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-[90dvh] relative">
+            <div className=" absolute top-20 left-1/2 transform -translate-x-1/2 text-yellow-400 font-bold text-4xl flex items-center">
+              <img
+                width="53"
+                height="53"
+                src="https://img.icons8.com/external-vectorslab-flat-vectorslab/53/external-Dollar-Coins-casino-vectorslab-flat-vectorslab.png"
+                alt="external-Dollar-Coins-casino-vectorslab-flat-vectorslab"
+                className="inline-block"
+              />
+              <span className="inline-block ml-3">{betAmount * 2} Coins</span>
+            </div>
+            <div className="min-h-[45vh] w-[30%]">
+              {/* <h3
                 id="status"
                 className="w-full min-h-[4dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white"
               >
                 Status: {status}
-              </h3>
-              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6">
-                <h5>PGN:</h5>
-                <h5 id="pgn">{pgn}</h5>
+              </h3> */}
+              <div className="w-full min-h-[45vh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white overflow-auto">
+                <h5 className="mb-3 font-bold">Move History:</h5>
+                {pgn ? (
+                  <div className="overflow-auto max-h-[40vh]">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-white/10 backdrop-blur">
+                        <tr>
+                          <th className="p-2 text-left border-b border-white/20">
+                            #
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            White
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            Black
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          // Parse PGN and extract moves
+                          const moves = pgn
+                            .split(/\d+\./)
+                            .filter((move) => move.trim());
+                          return moves.map((moveSet, index) => {
+                            const [whiteMove, blackMove] = moveSet
+                              .trim()
+                              .split(/\s+/);
+                            return (
+                              <tr key={index + 1} className="hover:bg-white/5">
+                                <td className="p-2 border-b border-white/10 font-mono text-gray-400">
+                                  {index + 1}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {whiteMove || "-"}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {blackMove || "-"}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 italic">No moves yet</p>
+                )}
               </div>
             </div>
-            <main className="p-8 h-[65dvh] aspect-square mx-auto">
-              <div id="myBoard" ref={boardRef} style={{ width: "100%", height: "100%", margin: "auto" }}></div>
+            <main className="p-8 h-[50vh] aspect-square mx-auto">
+              <div
+                id="myBoard"
+                ref={boardRef}
+                style={{ width: "100%", margin: "auto" }}
+              ></div>
               {capturedPieces.length > 0 && (
-                <div style={{ marginBottom: playerColor === "white" ? "20px" : "0", marginTop: playerColor === "black" ? "20px" : "0", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    marginBottom: playerColor === "white" ? "20px" : "0",
+                    marginTop: playerColor === "black" ? "20px" : "0",
+                    display: "flex",
+                    gap: "10px",
+                    flexWrap: "wrap",
+                  }}
+                >
                   {capturedPieces.map((piece, index) => (
                     <img
                       key={index}
-                      src={`/img/chesspieces/wikipedia/${playerColor.charAt(0)}${piece}.png`}
+                      src={`/img/chesspieces/wikipedia/${playerColor.charAt(
+                        0
+                      )}${piece}.png`}
                       alt={`Captured ${piece}`}
                       style={{ width: "50px", height: "50px" }}
                     />
@@ -333,14 +412,29 @@ export default function ChessGame() {
                 </div>
               )}
             </main>
-            <div className="min-h-[60dvh] w-[30%]">
+            <div className="min-h-[45vh] w-[30%]">
               <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
-                05:00:00
+                30:00:00
               </div>
               <div className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[350px] text-white">
-                <div className="flex items-center justify-start space-x-3">
+                <div className="flex items-center border-b border-white/20 pb-3 justify-start space-x-3">
                   <div className="h-3 rounded-full bg-green-100 aspect-square"></div>
                   <h3>Anonymous</h3>
+                </div>
+                <div className=" mt-3">
+                  <h3
+                    id="status"
+                    className="w-full min-h-[4vh] px-4 py-3 text-white"
+                  >
+                    <img
+                      width="35"
+                      height="35"
+                      src="https://img.icons8.com/cotton/64/information--v2.png"
+                      alt="information--v2"
+                      className="inline-block"
+                    />
+                    <span className=" inline-block pl-3">{status}</span>
+                  </h3>
                 </div>
                 {gameOver && (
                   <button
@@ -357,7 +451,10 @@ export default function ChessGame() {
           <footer className="p-6 text-center absolute bottom-0 left-0 right-0">
             <p className="text-gray-400">
               © 2025{" "}
-              <a href="https://coullax.com/" className="text-purple-400 hover:text-purple-300 transition-colors">
+              <a
+                href="https://coullax.com/"
+                className="text-purple-400 hover:text-purple-300 transition-colors"
+              >
                 Coullax
               </a>{" "}
               All Rights Reserved.

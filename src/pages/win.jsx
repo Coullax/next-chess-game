@@ -10,12 +10,20 @@ export default function WinPage() {
   const [selectedWallet, setSelectedWallet] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showClaimedCoins, setShowClaimedCoins] = useState(false);
+  const [winCoinsAmount, setWinCoinsAmount] = useState(100);
   const coinsRef = useRef(null);
   const coinCounterRef = useRef(null);
 
   useEffect(() => {
     if (router.query.player1Bool !== undefined) {
       setPlayer1Bool(router.query.player1Bool === "true");
+    }
+    // Check if winAmount is passed as query parameter
+    if (router.query.winAmount !== undefined) {
+      const amount = parseInt(router.query.winAmount, 10);
+      if (!isNaN(amount) && amount > 0) {
+        setWinCoinsAmount(amount);
+      }
     }
   }, [router.query]);
 
@@ -27,8 +35,8 @@ export default function WinPage() {
       
       // Wait for animation to complete before updating tokens
       setTimeout(() => {
-        setFakeTokens(prev => prev + 20);
-        sessionStorage.setItem("fakeTokens", (fakeTokens + 20).toString());
+        setFakeTokens(prev => prev + winCoinsAmount);
+        sessionStorage.setItem("fakeTokens", (fakeTokens + winCoinsAmount).toString());
         setIsAnimating(false);
       }, 2000); // Animation duration
 
@@ -240,7 +248,7 @@ export default function WinPage() {
                     {[...Array(8)].map((_, i) => (
                       <motion.div
                         key={`flying-coin-${i}`}
-                        className="fixed text-yellow-400 text-xl font-bold pointer-events-none z-50"
+                        className="fixed text-yellow-400 text-4xl font-bold pointer-events-none z-50"
                         style={{
                           left: '50%',
                           top: '50%',
@@ -281,7 +289,7 @@ export default function WinPage() {
                     
                     {/* Main +20 text animation to exact counter position */}
                     <motion.div
-                      className="fixed text-yellow-400 text-2xl font-bold pointer-events-none z-50"
+                      className="fixed text-yellow-400 text-3xl font-bold pointer-events-none z-50"
                       style={{
                         left: '50%',
                         top: '50%',
@@ -320,7 +328,7 @@ export default function WinPage() {
                         }, 500); // Small delay to show the final coin counter update
                       }}
                     >
-                      +20
+                      +{winCoinsAmount}
                     </motion.div>
                   </>
                 )}
@@ -374,7 +382,7 @@ export default function WinPage() {
                     transition={{ duration: 0.5, repeat: isAnimating ? 3 : 0 }}
                   >
                     🪙{" "}
-                    <span className="font-bold text-lg text-yellow-400">20 Coins</span>
+                    <span className="font-bold text-lg text-yellow-400">{winCoinsAmount} Coins</span>
                   </motion.h1>
                   
                   {/* Floating coins animation */}
