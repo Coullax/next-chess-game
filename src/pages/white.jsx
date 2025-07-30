@@ -264,9 +264,45 @@ export default function WhiteGame() {
               >
                 Status: {status}
               </h3>
-              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6 ">
-                <h5>PGN:</h5>
-                <h5 id="pgn">{pgn}</h5>
+              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6 overflow-auto">
+                <h5 className="mb-3 font-bold">Move History:</h5>
+                {pgn ? (
+                  <div className="overflow-auto max-h-[45dvh]">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-white/10 backdrop-blur">
+                        <tr>
+                          <th className="p-2 text-left border-b border-white/20">#</th>
+                          <th className="p-2 text-left border-b border-white/20">White</th>
+                          <th className="p-2 text-left border-b border-white/20">Black</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          // Parse PGN and extract moves
+                          const moves = pgn.split(/\d+\./).filter(move => move.trim());
+                          return moves.map((moveSet, index) => {
+                            const [whiteMove, blackMove] = moveSet.trim().split(/\s+/);
+                            return (
+                              <tr key={index + 1} className="hover:bg-white/5">
+                                <td className="p-2 border-b border-white/10 font-mono text-gray-400">
+                                  {index + 1}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {whiteMove || '-'}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {blackMove || '-'}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 italic">No moves yet</p>
+                )}
               </div>
             </div>
 
