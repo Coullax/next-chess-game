@@ -44,8 +44,8 @@ export default function ChessGame() {
         return;
       }
 
-      socket = io("http://localhost:3001", { 
-        reconnection: true, 
+      socket = io("http://localhost:3001", {
+        reconnection: true,
         reconnectionAttempts: 5,
         query: { code, color: playerColor } // Send initial query params
       });
@@ -285,15 +285,61 @@ export default function ChessGame() {
         <div className="max-w-[1550px] mx-auto">
           <div className="cover-container items-center justify-center flex flex-row p-3 mx-auto h-dvh">
             <div className="min-h-[60dvh] w-[30%]">
-              <h3
+              {/* <h3
                 id="status"
                 className="w-full min-h-[4dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white"
               >
                 Status: {status}
-              </h3>
-              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6">
-                <h5>PGN:</h5>
-                <h5 id="pgn">{pgn}</h5>
+              </h3> */}
+              <div className="w-full min-h-[60dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white overflow-auto">
+                <h5 className="mb-3 font-bold">Move History:</h5>
+                {pgn ? (
+                  <div className="overflow-auto max-h-[45dvh]">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-white/10 backdrop-blur">
+                        <tr>
+                          <th className="p-2 text-left border-b border-white/20">
+                            #
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            White
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            Black
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          // Parse PGN and extract moves
+                          const moves = pgn
+                            .split(/\d+\./)
+                            .filter((move) => move.trim());
+                          return moves.map((moveSet, index) => {
+                            const [whiteMove, blackMove] = moveSet
+                              .trim()
+                              .split(/\s+/);
+                            return (
+                              <tr key={index + 1} className="hover:bg-white/5">
+                                <td className="p-2 border-b border-white/10 font-mono text-gray-400">
+                                  {index + 1}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {whiteMove || "-"}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {blackMove || "-"}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 italic">No moves yet</p>
+                )}
               </div>
             </div>
             <main className="p-8 h-[65dvh] aspect-square mx-auto">
@@ -313,12 +359,27 @@ export default function ChessGame() {
             </main>
             <div className="min-h-[60dvh] w-[30%]">
               <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
-                05:00:00
+                30:00:00
               </div>
               <div className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[350px] text-white">
-                <div className="flex items-center justify-start space-x-3">
+                <div className="flex items-center border-b border-white/20 pb-3 justify-start space-x-3">
                   <div className="h-3 rounded-full bg-green-100 aspect-square"></div>
                   <h3>Anonymous</h3>
+                </div>
+                <div className=" mt-3">
+                  <h3
+                    id="status"
+                    className="w-full min-h-[4dvh] px-4 py-3 text-white"
+                  >
+                    <img
+                      width="35"
+                      height="35"
+                      src="https://img.icons8.com/cotton/64/information--v2.png"
+                      alt="information--v2"
+                      className="inline-block"
+                    />
+                    <span className=" inline-block pl-3">{status}</span>
+                  </h3>
                 </div>
                 {gameOver && (
                   <button
