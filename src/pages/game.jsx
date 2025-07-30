@@ -39,7 +39,7 @@ export default function ChessGame() {
         return;
       }
       const code = searchParams.get("code");
-      if (!code || code.length !== 3) { // Assuming a 3-digit code for simplicity
+      if (!code || code.length !== 3) {
         setStatus("Invalid game code");
         return;
       }
@@ -47,10 +47,10 @@ export default function ChessGame() {
       socket = io("http://localhost:3001", { 
         reconnection: true, 
         reconnectionAttempts: 5,
-        query: { code, color: playerColor } // Send initial query params
+        query: { code, color: playerColor }
       });
 
-      if (window.Chess && window.Chessboard && boardRef.current) {
+      if (window.Chess && window.Chessboard && boardRef.current && window.jQuery) {
         gameRef.current = new window.Chess();
         console.log("Game initialized with FEN:", gameRef.current.fen());
         const config = {
@@ -66,7 +66,8 @@ export default function ChessGame() {
         if (playerColor === "black") boardInstanceRef.current.flip();
         updateStatus();
       } else {
-        console.error("Chess or Chessboard not loaded:", window.Chess, window.Chessboard);
+        console.error("Required libraries not loaded:", { Chess: !!window.Chess, Chessboard: !!window.Chessboard, jQuery: !!window.jQuery });
+        setStatus("Failed to load game libraries");
       }
 
       socket.on("connect", () => {
@@ -251,20 +252,29 @@ export default function ChessGame() {
       <Script
         src="/js/jquery-3.7.0.min.js"
         strategy="beforeInteractive"
-        onLoad={() => setScriptsReady(false)}
-        onError={() => console.error("jQuery failed")}
+        onLoad={() => {
+          console.log("jQuery loaded");
+          setScriptsReady(false); // Reset to ensure next script waits
+        }}
+        onError={() => console.error("jQuery failed to load")}
       />
       <Script
         src="/js/chess-0.10.3.min.js"
         strategy="beforeInteractive"
-        onLoad={() => setScriptsReady(false)}
-        onError={() => console.error("Chess.js failed")}
+        onLoad={() => {
+          console.log("Chess.js loaded");
+          setScriptsReady(false); // Reset again
+        }}
+        onError={() => console.error("Chess.js failed to load")}
       />
       <Script
         src="/js/chessboard-1.0.0.min.js"
         strategy="beforeInteractive"
-        onLoad={() => setScriptsReady(true)}
-        onError={() => console.error("Chessboard.js failed")}
+        onLoad={() => {
+          console.log("Chessboard.js loaded");
+          setScriptsReady(true); // Only set true when all are loaded
+        }}
+        onError={() => console.error("Chessboard.js failed to load")}
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">

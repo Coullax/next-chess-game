@@ -9,6 +9,7 @@ export default function App({ Component, pageProps }) {
         <meta name="description" content="A simple chat app using Next.js and Socket.io" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js" />
       </Head>
 
       <Component {...pageProps} />
