@@ -46,7 +46,11 @@ export default function ChessGame() {
         if (playerColor === "black") boardInstanceRef.current.flip();
         updateStatus();
       } else {
-        console.error("Chess or Chessboard not available:", window.Chess, window.Chessboard);
+        console.error(
+          "Chess or Chessboard not available:",
+          window.Chess,
+          window.Chessboard
+        );
       }
 
       socket.on("newMove", (move) => {
@@ -93,7 +97,13 @@ export default function ChessGame() {
   }, [scriptsReady, router, playerColor]);
 
   const onDragStart = (source, piece) => {
-    console.log("Drag start:", source, piece, gameRef.current?.turn(), playerColor);
+    console.log(
+      "Drag start:",
+      source,
+      piece,
+      gameRef.current?.turn(),
+      playerColor
+    );
     if (!gameRef.current || gameRef.current.game_over()) return false;
     if (gameOver) return false;
 
@@ -143,10 +153,13 @@ export default function ChessGame() {
     } else if (gameOver) {
       status = "Opponent disconnected, you win!";
     } else if (!gameHasStarted) {
-      status = `Waiting for ${playerColor === "white" ? "black" : "white"} to join`;
+      status = `Waiting for ${
+        playerColor === "white" ? "black" : "white"
+      } to join`;
     } else {
       status = moveColor + " to move";
-      if (gameRef.current.in_check()) status += ", " + moveColor + " is in check";
+      if (gameRef.current.in_check())
+        status += ", " + moveColor + " is in check";
     }
     setStatus(status);
     setPgn(gameRef.current.pgn());
@@ -155,7 +168,10 @@ export default function ChessGame() {
   return (
     <>
       <Head>
-        <title>Chess Game - {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)} Player</title>
+        <title>
+          Chess Game -{" "}
+          {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)} Player
+        </title>
         <meta name="description" content={`Play chess as ${playerColor}`} />
         <link rel="icon" href="/favicon.ico" />
         <link href="/css/chessboard-1.0.0.min.css" rel="stylesheet" />
@@ -190,7 +206,8 @@ export default function ChessGame() {
               </h1>
             </div>
             <h1 className="uppercase text-2xl md:text-3xl font-bold">
-              {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)} Player
+              {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)}{" "}
+              Player
             </h1>
           </div>
         </header>
@@ -203,19 +220,79 @@ export default function ChessGame() {
               >
                 Status: {status}
               </h3>
-              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6">
-                <h5>PGN:</h5>
-                <h5 id="pgn">{pgn}</h5>
+              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6 overflow-auto">
+                <h5 className="mb-3 font-bold">Move History:</h5>
+                {pgn ? (
+                  <div className="overflow-auto max-h-[45dvh]">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-white/10 backdrop-blur">
+                        <tr>
+                          <th className="p-2 text-left border-b border-white/20">
+                            #
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            White
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            Black
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          // Parse PGN and extract moves
+                          const moves = pgn
+                            .split(/\d+\./)
+                            .filter((move) => move.trim());
+                          return moves.map((moveSet, index) => {
+                            const [whiteMove, blackMove] = moveSet
+                              .trim()
+                              .split(/\s+/);
+                            return (
+                              <tr key={index + 1} className="hover:bg-white/5">
+                                <td className="p-2 border-b border-white/10 font-mono text-gray-400">
+                                  {index + 1}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {whiteMove || "-"}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {blackMove || "-"}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 italic">No moves yet</p>
+                )}
               </div>
             </div>
             <main className="p-8 h-[65dvh] aspect-square mx-auto">
-              <div id="myBoard" ref={boardRef} style={{ width: "100%", margin: "auto" }}></div>
+              <div
+                id="myBoard"
+                ref={boardRef}
+                style={{ width: "100%", margin: "auto" }}
+              ></div>
               {capturedPieces.length > 0 && (
-                <div style={{ marginBottom: playerColor === "white" ? "20px" : "0", marginTop: playerColor === "black" ? "20px" : "0", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    marginBottom: playerColor === "white" ? "20px" : "0",
+                    marginTop: playerColor === "black" ? "20px" : "0",
+                    display: "flex",
+                    gap: "10px",
+                    flexWrap: "wrap",
+                  }}
+                >
                   {capturedPieces.map((piece, index) => (
                     <img
                       key={index}
-                      src={`/img/chesspieces/wikipedia/${playerColor.charAt(0)}${piece}.png`}
+                      src={`/img/chesspieces/wikipedia/${playerColor.charAt(
+                        0
+                      )}${piece}.png`}
                       alt={`Captured ${piece}`}
                       style={{ width: "50px", height: "50px" }}
                     />
@@ -238,7 +315,10 @@ export default function ChessGame() {
           <footer className="p-6 text-center absolute bottom-0 left-0 right-0">
             <p className="text-gray-400">
               © 2025{" "}
-              <a href="https://coullax.com/" className="text-purple-400 hover:text-purple-300 transition-colors">
+              <a
+                href="https://coullax.com/"
+                className="text-purple-400 hover:text-purple-300 transition-colors"
+              >
                 Coullax
               </a>{" "}
               All Rights Reserved.

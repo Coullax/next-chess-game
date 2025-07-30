@@ -156,7 +156,7 @@ export default function BlackGame() {
     };
 
     initializeGame();
-  }, [scriptsReady, router,gameHasStarted]);
+  }, [scriptsReady, router, gameHasStarted]);
 
   // const initializeGame = async () => {
   //   await fetch("/api/socket");
@@ -311,7 +311,7 @@ export default function BlackGame() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
           <div className="flex justify-between items-center max-w-[1550px] mx-auto">
-             <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-2xl">♚</span>
               </div>
@@ -333,9 +333,55 @@ export default function BlackGame() {
               >
                 Status: {status}
               </h3>
-              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6 ">
-                <h5>PGN:</h5>
-                <h5 id="pgn">{pgn}</h5>
+              <div className="w-full min-h-[55dvh] px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white mt-6 overflow-auto">
+                <h5 className="mb-3 font-bold">Move History:</h5>
+                {pgn ? (
+                  <div className="overflow-auto max-h-[45dvh]">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-white/10 backdrop-blur">
+                        <tr>
+                          <th className="p-2 text-left border-b border-white/20">
+                            #
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            White
+                          </th>
+                          <th className="p-2 text-left border-b border-white/20">
+                            Black
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(() => {
+                          // Parse PGN and extract moves
+                          const moves = pgn
+                            .split(/\d+\./)
+                            .filter((move) => move.trim());
+                          return moves.map((moveSet, index) => {
+                            const [whiteMove, blackMove] = moveSet
+                              .trim()
+                              .split(/\s+/);
+                            return (
+                              <tr key={index + 1} className="hover:bg-white/5">
+                                <td className="p-2 border-b border-white/10 font-mono text-gray-400">
+                                  {index + 1}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {whiteMove || "-"}
+                                </td>
+                                <td className="p-2 border-b border-white/10 font-mono">
+                                  {blackMove || "-"}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 italic">No moves yet</p>
+                )}
               </div>
             </div>
             <main className="p-8 h-[65dvh] aspect-square mx-auto">
@@ -388,4 +434,4 @@ export default function BlackGame() {
       </div>
     </>
   );
-} 
+}
