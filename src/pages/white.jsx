@@ -19,6 +19,28 @@ export default function WhiteGame() {
   const [scriptsReady, setScriptsReady] = useState(false);
   const [capturedPieces, setCapturedPieces] = useState([]);
   const searchParams = useSearchParams();
+  const [whiteTime, setWhiteTime] = useState(60); // 30 minutes in seconds
+  const [blackTime, setBlackTime] = useState(60); // 30 minutes in seconds
+  useEffect(() => {
+    if (!gameHasStarted || gameRef.current?.game_over()) return;
+  
+    const timer = setInterval(() => {
+      if (gameRef.current.turn() === "w") {
+        setWhiteTime((prev) => (prev > 0 ? prev - 1 : 0));
+      } else {
+        setBlackTime((prev) => (prev > 0 ? prev - 1 : 0));
+      }
+    }, 1000);
+  
+    return () => clearInterval(timer);
+  }, [gameHasStarted]);
+  
+  // Add formatTime helper function inside WhiteGame component
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
 
   useEffect(() => {
     if (!scriptsReady) return;
@@ -335,9 +357,9 @@ export default function WhiteGame() {
             </main>
 
             <div className=" min-h-[60dvh] w-[30%]">
-              <div className=" text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
-                05:00:00
-              </div>
+<div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
+  {formatTime(whiteTime)}
+</div>
               <div className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[350px] text-white">
                 <div className=" flex items-center justify-start space-x-3">
                   <div className=" h-3 rounded-full bg-green-100 aspect-square"></div>
