@@ -4,6 +4,7 @@ import Head from "next/head";
 import Script from "next/script";
 import io from "socket.io-client";
 import Pusher from "pusher-js";
+import Image from "next/image";
 
 let socket;
 
@@ -347,11 +348,12 @@ export default function BlackGame() {
                 {capturedPieces.length > 0 && (
                     <div style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                         {capturedPieces.map((piece, index) => (
-                            <img
+                            <Image
                                 key={index}
                                 src={`/img/chesspieces/wikipedia/b${piece}.png`}
                                 alt={`Captured ${piece}`}
-                                style={{ width: '50px', height: '50px' }}
+                                width= {50}
+                                 height={50}
                             />
                         ))}
                     </div>
