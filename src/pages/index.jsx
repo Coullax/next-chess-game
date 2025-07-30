@@ -120,7 +120,7 @@ export default function Home() {
     try {
       // Here you would integrate with your smart contract
       console.log(`Creating game with code: ${gameCode}, bet: ${betAmount}`);
-      router.push(`/white?code=${gameCode}&bet=${betAmount}`);
+      router.push(`/game?color=white&code=${gameCode}&bet=${betAmount}`);
 
     } catch (error) {
       console.error("Error creating game:", error);
@@ -137,7 +137,7 @@ export default function Home() {
       return;
     }
     setErrorMessage("");
-    router.push(`/black?code=${gameCode}&bet=${betAmount}`);
+    router.push(`/game?color=black&code=${gameCode}&bet=${betAmount}`);
     console.log(`Joining game with code: ${gameCode}, bet: ${betAmount}`);
   };
 
