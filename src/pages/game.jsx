@@ -36,19 +36,19 @@ export default function ChessGame() {
       code: searchParams.get("code"),
       bet: searchParams.get("bet")
     };
-    console.log("🔧 Game parameters initialized:", gameParamsRef.current);
+    // console.log("🔧 Game parameters initialized:", gameParamsRef.current);
 
     // Also set the player color immediately if available
     const colorParam = searchParams.get("color");
     if (colorParam && ["white", "black"].includes(colorParam.toLowerCase())) {
-      console.log("🔧 Setting initial player color:", colorParam.toLowerCase());
+      // console.log("🔧 Setting initial player color:", colorParam.toLowerCase());
       setPlayerColor(colorParam.toLowerCase());
     }
   }, []); // Only run once on mount
 
   // Check for already loaded scripts on component mount
   useEffect(() => {
-    console.log("Checking for already loaded scripts...");
+    // console.log("Checking for already loaded scripts...");
     const checkExistingScripts = () => {
       const scriptsStatus = {
         jquery: !!window.jQuery,
@@ -56,7 +56,7 @@ export default function ChessGame() {
         chessboard: !!window.Chessboard
       };
 
-      console.log("Existing scripts found:", scriptsStatus);
+      // console.log("Existing scripts found:", scriptsStatus);
       setScriptsLoaded(scriptsStatus);
     };
 
@@ -74,25 +74,25 @@ export default function ChessGame() {
     const timeout = setTimeout(() => {
       // Only try to load scripts if they're not already available
       if ((!scriptsLoaded.chess && !window.Chess) || (!scriptsLoaded.chessboard && !window.Chessboard)) {
-        console.log("Some essential scripts failed to load, trying CDN fallbacks...");
+        // console.log("Some essential scripts failed to load, trying CDN fallbacks...");
 
         if (!scriptsLoaded.chess && !window.Chess) {
-          console.log("Loading Chess.js from CDN...");
+          // console.log("Loading Chess.js from CDN...");
           const chessScript = document.createElement('script');
           chessScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js';
           chessScript.onload = () => {
-            console.log("Chess.js CDN fallback loaded");
+            // console.log("Chess.js CDN fallback loaded");
             setScriptsLoaded(prev => ({ ...prev, chess: true }));
           };
           document.head.appendChild(chessScript);
         }
 
         if (!scriptsLoaded.chessboard && !window.Chessboard) {
-          console.log("Loading Chessboard.js from CDN...");
+          // console.log("Loading Chessboard.js from CDN...");
           const chessboardScript = document.createElement('script');
           chessboardScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js';
           chessboardScript.onload = () => {
-            console.log("Chessboard.js CDN fallback loaded");
+            // console.log("Chessboard.js CDN fallback loaded");
             setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
           };
           document.head.appendChild(chessboardScript);
@@ -100,20 +100,20 @@ export default function ChessGame() {
 
         // Try to load jQuery but don't block on it
         if (!scriptsLoaded.jquery && !window.jQuery) {
-          console.log("Loading jQuery from CDN...");
+          // console.log("Loading jQuery from CDN...");
           const jqueryScript = document.createElement('script');
           jqueryScript.src = 'https://code.jquery.com/jquery-3.7.0.min.js';
           jqueryScript.onload = () => {
-            console.log("jQuery CDN fallback loaded");
+            // console.log("jQuery CDN fallback loaded");
             setScriptsLoaded(prev => ({ ...prev, jquery: true }));
           };
           jqueryScript.onerror = () => {
-            console.log("jQuery fallback failed, continuing without it");
+            // console.log("jQuery fallback failed, continuing without it");
           };
           document.head.appendChild(jqueryScript);
         }
       } else {
-        console.log("All essential scripts already available, no fallback needed");
+        // console.log("All essential scripts already available, no fallback needed");
       }
     }, 1000); // Reduced timeout to 1 second
 
@@ -130,22 +130,22 @@ const [blackTime, setBlackTime] = useState(1800); // 30 minutes in seconds
 
   // Check if all scripts are loaded
   useEffect(() => {
-    console.log("Scripts loaded state:", scriptsLoaded);
-    console.log("Window objects available:", {
-      Chess: !!window.Chess,
-      Chessboard: !!window.Chessboard,
-      jQuery: !!window.jQuery
-    });
+    // console.log("Scripts loaded state:", scriptsLoaded);
+    // console.log("Window objects available:", {
+    //   Chess: !!window.Chess,
+    //   Chessboard: !!window.Chessboard,
+    //   jQuery: !!window.jQuery
+    // });
 
     // Chess and Chessboard are the essential ones, check both state and window objects
     const chessReady = scriptsLoaded.chess || !!window.Chess;
     const chessboardReady = scriptsLoaded.chessboard || !!window.Chessboard;
 
     if (chessReady && chessboardReady) {
-      console.log("Essential scripts loaded, setting scriptsReady to true");
+      // console.log("Essential scripts loaded, setting scriptsReady to true");
       setScriptsReady(true);
     } else {
-      console.log("Waiting for scripts...", { chessReady, chessboardReady });
+      // console.log("Waiting for scripts...", { chessReady, chessboardReady });
     }
   }, [scriptsLoaded]);
 
@@ -172,16 +172,16 @@ const formatTime = (seconds) => {
 };
 
   useEffect(() => {
-    console.log("useEffect triggered - scriptsReady:", scriptsReady);
+    // console.log("useEffect triggered - scriptsReady:", scriptsReady);
     if (!scriptsReady || isInitializing) return;
 
     const initializeGame = async () => {
-      console.log("Initializing game...");
+      // console.log("Initializing game...");
       setIsInitializing(true);
 
       // Clean up previous socket connection more thoroughly
       if (socketRef.current) {
-        console.log("Cleaning up previous socket");
+        // console.log("Cleaning up previous socket");
         socketRef.current.removeAllListeners();
         socketRef.current.disconnect();
         socketRef.current = null;
@@ -193,12 +193,12 @@ const formatTime = (seconds) => {
       const code = gameParamsRef.current?.code;
       const betParam = gameParamsRef.current?.bet;
 
-      console.log("🔧 INITIALIZATION - Raw params:", gameParamsRef.current);
-      console.log("🔧 INITIALIZATION - Color param:", colorParam);
-      console.log("🔧 INITIALIZATION - Current playerColor state:", playerColor);
+      // console.log("🔧 INITIALIZATION - Raw params:", gameParamsRef.current);
+      // console.log("🔧 INITIALIZATION - Color param:", colorParam);
+      // console.log("🔧 INITIALIZATION - Current playerColor state:", playerColor);
 
       if (colorParam && ["white", "black"].includes(colorParam.toLowerCase())) {
-        console.log("🔧 INITIALIZATION - Setting player color to:", colorParam.toLowerCase());
+        // console.log("🔧 INITIALIZATION - Setting player color to:", colorParam.toLowerCase());
         setPlayerColor(colorParam.toLowerCase());
       } else {
         console.error("🔧 INITIALIZATION - Invalid color parameter:", colorParam);
@@ -221,7 +221,7 @@ const formatTime = (seconds) => {
         return;
       }
 
-      console.log("Checking dependencies...");
+      // console.log("Checking dependencies...");
       // Wait a bit for scripts to be fully available
       await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -241,7 +241,7 @@ const formatTime = (seconds) => {
         return;
       }
 
-      console.log("All dependencies available, initializing socket...");
+      // console.log("All dependencies available, initializing socket...");
 
       // Create new socket connection
       socketRef.current = io("https://chess-site-server.onrender.com", {
@@ -258,14 +258,14 @@ const formatTime = (seconds) => {
 
       // Clean up previous board instance
       if (boardInstanceRef.current && typeof boardInstanceRef.current.destroy === 'function') {
-        console.log("Destroying previous board instance");
+        // console.log("Destroying previous board instance");
         boardInstanceRef.current.destroy();
         boardInstanceRef.current = null;
       }
 
-      console.log("Creating new Chess game...");
+      // console.log("Creating new Chess game...");
       gameRef.current = new window.Chess();
-      console.log("Game initialized with FEN:", gameRef.current.fen());
+      // console.log("Game initialized with FEN:", gameRef.current.fen());
 
       const config = {
         draggable: true,
@@ -276,27 +276,27 @@ const formatTime = (seconds) => {
         pieceTheme: "/img/chesspieces/wikipedia/{piece}.png",
         moveSpeed: "fast",
         onMoveEnd: () => {
-          console.log("Move animation ended");
+          // console.log("Move animation ended");
         },
         onDragEnd: () => {
-          console.log("Drag ended");
+          // console.log("Drag ended");
         }
       };
 
       try {
-        console.log("Creating chessboard...");
+        // console.log("Creating chessboard...");
         boardInstanceRef.current = window.Chessboard(boardRef.current, config);
-        console.log("Chessboard created successfully");
+        // console.log("Chessboard created successfully");
 
         if (colorParam.toLowerCase() === "black") {
-          console.log("Flipping board for black player");
+          // console.log("Flipping board for black player");
           boardInstanceRef.current.flip();
         }
 
         // Test board configuration
-        console.log("🔧 Board config test:");
-        console.log("🔧 Board draggable:", boardInstanceRef.current.config?.draggable);
-        console.log("🔧 Board orientation:", boardInstanceRef.current.orientation());
+        // console.log("🔧 Board config test:");
+        // console.log("🔧 Board draggable:", boardInstanceRef.current.config?.draggable);
+        // console.log("🔧 Board orientation:", boardInstanceRef.current.orientation());
 
         updateStatus();
       } catch (error) {
@@ -308,7 +308,7 @@ const formatTime = (seconds) => {
 
       // Set up socket event listeners
       socketRef.current.on("connect", () => {
-        console.log("Connected to server, socket ID:", socketRef.current.id);
+        // console.log("Connected to server, socket ID:", socketRef.current.id);
         setIsInitializing(false); // Mark initialization as complete
         // Add a small delay to ensure previous connections are cleaned up
         setTimeout(() => {
@@ -323,23 +323,23 @@ const formatTime = (seconds) => {
       });
 
       socketRef.current.on("newMove", (move) => {
-        console.log("📦 RECEIVED MOVE:", move, "Current player:", playerColor);
+        // console.log("📦 RECEIVED MOVE:", move, "Current player:", playerColor);
         if (gameRef.current && !gameOver) {
-          console.log("📦 Before move - FEN:", gameRef.current.fen());
-          console.log("📦 Before move - Turn:", gameRef.current.turn());
+          // console.log("📦 Before move - FEN:", gameRef.current.fen());
+          // console.log("📦 Before move - Turn:", gameRef.current.turn());
 
           const executedMove = gameRef.current.move(move);
 
-          console.log("📦 After move - FEN:", gameRef.current.fen());
-          console.log("📦 After move - Turn:", gameRef.current.turn());
-          console.log("📦 Executed move:", executedMove);
+          // console.log("📦 After move - FEN:", gameRef.current.fen());
+          // console.log("📦 After move - Turn:", gameRef.current.turn());
+          // console.log("📦 Executed move:", executedMove);
 
           if (executedMove && move.captured) {
             setCapturedPieces((prev) => [...prev, move.captured]);
           }
           if (boardInstanceRef.current) {
             boardInstanceRef.current.position(gameRef.current.fen());
-            console.log("📦 Board position updated");
+            // console.log("📦 Board position updated");
           }
           checkGameState();
         }
@@ -375,7 +375,7 @@ const formatTime = (seconds) => {
       socketRef.current.on("error", (error) => {
         console.error("Socket error:", error);
         if (error.message === "Color already taken") {
-          console.log("Color already taken - showing error message");
+          // console.log("Color already taken - showing error message");
           setStatus("This color is already taken in this game. Please go back and try a different game or color.");
           // Don't auto-redirect, let user decide what to do
         } else {
@@ -384,7 +384,7 @@ const formatTime = (seconds) => {
       });
 
       socketRef.current.on("disconnect", (reason) => {
-        console.log("Socket disconnected:", reason);
+        // console.log("Socket disconnected:", reason);
         setIsInitializing(false); // Reset initialization flag on disconnect
       });
     };
@@ -397,14 +397,14 @@ const formatTime = (seconds) => {
 
     // Cleanup function - this runs when the component unmounts or dependencies change
     return () => {
-      console.log("⚠️ CLEANUP: useEffect cleanup triggered - this could indicate unexpected re-initialization");
+      // console.log("⚠️ CLEANUP: useEffect cleanup triggered - this could indicate unexpected re-initialization");
       setIsInitializing(false);
       if (socketRef.current) {
         // Notify server that we're leaving the game
         const code = gameParamsRef.current?.code;
         const colorParam = gameParamsRef.current?.color;
         if (code && colorParam) {
-          console.log("Sending leaveGame event:", { code, color: colorParam.toLowerCase() });
+          // console.log("Sending leaveGame event:", { code, color: colorParam.toLowerCase() });
           socketRef.current.emit("leaveGame", { code, color: colorParam.toLowerCase() });
         }
         socketRef.current.removeAllListeners();
@@ -433,14 +433,14 @@ const formatTime = (seconds) => {
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      console.log("⚠️ COMPONENT UNMOUNT: Final cleanup - this should only happen when leaving the game page");
+      // console.log("⚠️ COMPONENT UNMOUNT: Final cleanup - this should only happen when leaving the game page");
       window.removeEventListener('beforeunload', handleBeforeUnload);
 
       if (socketRef.current) {
         const code = gameParamsRef.current?.code;
         const colorParam = gameParamsRef.current?.color;
         if (code && colorParam) {
-          console.log("Final leaveGame event:", { code, color: colorParam.toLowerCase() });
+          // console.log("Final leaveGame event:", { code, color: colorParam.toLowerCase() });
           socketRef.current.emit("leaveGame", { code, color: colorParam.toLowerCase() });
         }
         socketRef.current.removeAllListeners();
@@ -496,42 +496,42 @@ const formatTime = (seconds) => {
     const isWhitePiece = piece.search(/^w/) !== -1;
     const isBlackPiece = piece.search(/^b/) !== -1;
 
-    console.log("🔍 DRAG START DEBUG:", {
-      source,
-      piece,
-      currentTurn,
-      playerColor,
-      isWhitePiece,
-      isBlackPiece,
-      gameHasStarted,
-      gameOver,
-      gameExists: !!gameRef.current,
-      gameOverCheck: gameRef.current?.game_over()
-    });
+    // console.log("🔍 DRAG START DEBUG:", {
+    //   source,
+    //   piece,
+    //   currentTurn,
+    //   playerColor,
+    //   isWhitePiece,
+    //   isBlackPiece,
+    //   gameHasStarted,
+    //   gameOver,
+    //   gameExists: !!gameRef.current,
+    //   gameOverCheck: gameRef.current?.game_over()
+    // });
 
     if (!gameRef.current || gameRef.current.game_over()) {
-      console.log("❌ BLOCKED: Game not available or game over");
+      // console.log("❌ BLOCKED: Game not available or game over");
       return false;
     }
 
     if (gameOver) {
-      console.log("❌ BLOCKED: Game state shows game over");
+      // console.log("❌ BLOCKED: Game state shows game over");
       return false;
     }
 
     // Check if it's the player's turn and they're moving their own pieces
     if (playerColor === "white") {
       const canMove = currentTurn === "w" && isWhitePiece;
-      console.log("🔍 WHITE PLAYER CHECK:", { currentTurn, isWhitePiece, canMove });
+      // console.log("🔍 WHITE PLAYER CHECK:", { currentTurn, isWhitePiece, canMove });
       return canMove;
     } else {
       const canMove = currentTurn === "b" && isBlackPiece;
-      console.log("🔍 BLACK PLAYER CHECK:", { currentTurn, isBlackPiece, canMove });
+      // console.log("🔍 BLACK PLAYER CHECK:", { currentTurn, isBlackPiece, canMove });
       return canMove;
     }
   };
   const onDrop = (source, target) => {
-    console.log("📤 DROP ATTEMPT:", source, "->", target, "gameOver:", gameOver, "isReconnecting:", isReconnecting);
+    // console.log("📤 DROP ATTEMPT:", source, "->", target, "gameOver:", gameOver, "isReconnecting:", isReconnecting);
 
     if (!gameRef.current || gameOver || isReconnecting) return;
 
@@ -539,12 +539,12 @@ const formatTime = (seconds) => {
     const move = gameRef.current.move(theMove);
 
     if (move === null) {
-      console.log("❌ INVALID MOVE, returning snapback");
+      // console.log("❌ INVALID MOVE, returning snapback");
       return "snapback";
     }
 
-    console.log("✅ VALID MOVE executed:", move);
-    console.log("📤 Sending move to server:", { ...theMove, captured: move.captured || null });
+    // console.log("✅ VALID MOVE executed:", move);
+    // console.log("📤 Sending move to server:", { ...theMove, captured: move.captured || null });
 
     if (socketRef.current) {
       socketRef.current.emit("move", { ...theMove, captured: move.captured || null });
@@ -563,28 +563,28 @@ const formatTime = (seconds) => {
 
     // Don't check for game end conditions if the game just started
     if (gameRef.current.history().length < 2) {
-      console.log("Game just started, skipping end game checks");
+      // console.log("Game just started, skipping end game checks");
       updateStatus();
       return;
     }
 
     if (gameRef.current.in_checkmate()) {
-      console.log("Checkmate detected!");
+      // console.log("Checkmate detected!");
       setGameOver(true);
       const currentTurn = gameRef.current.turn();
       const playerTurn = playerColor === "white" ? "w" : "b";
 
-      console.log("Current turn:", currentTurn, "Player turn:", playerTurn);
+      // console.log("Current turn:", currentTurn, "Player turn:", playerTurn);
 
       if (currentTurn !== playerTurn) {
-        console.log("Player wins! Redirecting to /win");
+        // console.log("Player wins! Redirecting to /win");
         setTimeout(() => router.push(`/win`), 1000); // Add delay
       } else {
-        console.log("Player loses! Redirecting to /lost");
+        // console.log("Player loses! Redirecting to /lost");
         setTimeout(() => router.push("/lost"), 1000); // Add delay
       }
     } else if (gameRef.current.in_draw()) {
-      console.log("Draw detected!");
+      // console.log("Draw detected!");
       setGameOver(true);
       setStatus("Game over, drawn position");
     }
@@ -646,13 +646,13 @@ const formatTime = (seconds) => {
   };
 
   const ignoreRematch = () => {
-    console.log("User ignored rematch, redirecting to home");
+    // console.log("User ignored rematch, redirecting to home");
     setShowRematchRequest(false);
     router.push("/");
   };
 
   const claimBet = () => {
-    console.log("Bet claimed:", betAmount, "redirecting to home");
+    // console.log("Bet claimed:", betAmount, "redirecting to home");
     setShowWinModal(false);
     router.push("/");
   };
@@ -672,13 +672,13 @@ const formatTime = (seconds) => {
         src="https://code.jquery.com/jquery-3.7.0.min.js"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log("jQuery CDN loaded successfully");
+          // console.log("jQuery CDN loaded successfully");
           setScriptsLoaded(prev => ({ ...prev, jquery: true }));
         }}
         onReady={() => {
           // This fires when script is ready, even if already loaded
           if (window.jQuery && !scriptsLoaded.jquery) {
-            console.log("jQuery already available");
+            // console.log("jQuery already available");
             setScriptsLoaded(prev => ({ ...prev, jquery: true }));
           }
         }}
@@ -688,11 +688,11 @@ const formatTime = (seconds) => {
           const script = document.createElement('script');
           script.src = '/js/jquery-3.7.0.min.js';
           script.onload = () => {
-            console.log("jQuery local fallback loaded successfully");
+            // console.log("jQuery local fallback loaded successfully");
             setScriptsLoaded(prev => ({ ...prev, jquery: true }));
           };
           script.onerror = () => {
-            console.log("jQuery not available, continuing without it");
+            // console.log("jQuery not available, continuing without it");
             setScriptsLoaded(prev => ({ ...prev, jquery: false }));
           };
           document.head.appendChild(script);
@@ -702,23 +702,23 @@ const formatTime = (seconds) => {
         src="/js/chess-0.10.3.min.js"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log("Chess.js loaded successfully");
+          // console.log("Chess.js loaded successfully");
           setScriptsLoaded(prev => ({ ...prev, chess: true }));
         }}
         onReady={() => {
           // This fires when script is ready, even if already loaded
           if (window.Chess && !scriptsLoaded.chess) {
-            console.log("Chess.js already available");
+            // console.log("Chess.js already available");
             setScriptsLoaded(prev => ({ ...prev, chess: true }));
           }
         }}
         onError={(e) => {
-          console.error("Chess.js failed to load:", e);
+          // console.error("Chess.js failed to load:", e);
           // Fallback to CDN
           const script = document.createElement('script');
           script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js';
           script.onload = () => {
-            console.log("Chess.js CDN loaded successfully");
+            // console.log("Chess.js CDN loaded successfully");
             setScriptsLoaded(prev => ({ ...prev, chess: true }));
           };
           document.head.appendChild(script);
@@ -728,13 +728,13 @@ const formatTime = (seconds) => {
         src="/js/chessboard-1.0.0.min.js"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log("Chessboard.js loaded successfully");
+          // console.log("Chessboard.js loaded successfully");
           setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
         }}
         onReady={() => {
           // This fires when script is ready, even if already loaded
           if (window.Chessboard && !scriptsLoaded.chessboard) {
-            console.log("Chessboard.js already available");
+            // console.log("Chessboard.js already available");
             setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
           }
         }}
@@ -744,7 +744,7 @@ const formatTime = (seconds) => {
           const script = document.createElement('script');
           script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js';
           script.onload = () => {
-            console.log("Chessboard.js CDN loaded successfully");
+            // console.log("Chessboard.js CDN loaded successfully");
             setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
           };
           document.head.appendChild(script);

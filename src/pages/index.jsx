@@ -120,7 +120,7 @@ export default function Home() {
                 ],
               });
             } catch (addError) {
-              console.log("Failed to add Goerli network to MetaMask");
+              // console.log("Failed to add Goerli network to MetaMask");
               setIsLoading(false);
               return;
             }
@@ -131,7 +131,7 @@ export default function Home() {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
-      console.log("Connected wallet address:", accounts[0]);
+      // console.log("Connected wallet address:", accounts[0]);
       setIsConnected(true);
       setShowCover(false);
     } catch (error) {
@@ -150,7 +150,7 @@ export default function Home() {
     try {
       // Generate a unique game code if one wasn't provided
       const finalGameCode = gameCode || Math.random().toString(36).substring(2, 8).toUpperCase();
-      console.log(`Creating game with code: ${finalGameCode}, bet: ${betAmount}`);
+      // console.log(`Creating game with code: ${finalGameCode}, bet: ${betAmount}`);
       router.push(`/game?color=white&code=${finalGameCode}&bet=${betAmount}`);
     } catch (error) {
       console.error("Error creating game:", error);
@@ -168,7 +168,7 @@ export default function Home() {
     }
     setErrorMessage("");
     router.push(`/game?color=black&code=${gameCode}&bet=${betAmount}`);
-    console.log(`Joining game with code: ${gameCode}, bet: ${betAmount}`);
+    // console.log(`Joining game with code: ${gameCode}, bet: ${betAmount}`);
   };
 
   return (
