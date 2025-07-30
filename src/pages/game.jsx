@@ -288,6 +288,15 @@ export default function ChessGame() {
         onError={() => console.error("Chess.js failed to load")}
       />
       <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js"
+        strategy="beforeInteractive"
+        onLoad={() => {
+            console.log("Chessboard.js loaded");
+            setScriptsReady(false); // Reset again
+        }}
+        onError={() => console.error("Chessboard.js failed to load")}
+        />
+      <Script
         src="/js/chessboard-1.0.0.min.js"
         strategy="beforeInteractive"
         onLoad={() => {
@@ -296,15 +305,7 @@ export default function ChessGame() {
         }}
         onError={() => console.error("Chessboard.js failed to load")}
       />
-      <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js"
-        strategy="beforeInteractive"
-        onLoad={() => {
-            console.log("Chessboard.js loaded");
-            setScriptsReady(true); // Reset again
-        }}
-        onError={() => console.error("Chessboard.js failed to load")}
-        />
+      
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
           <div className="flex justify-between items-center max-w-7xl mx-auto">
