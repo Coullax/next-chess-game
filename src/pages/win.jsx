@@ -11,22 +11,22 @@ export default function WinPage() {
   const [selectedWallet, setSelectedWallet] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showClaimedCoins, setShowClaimedCoins] = useState(false);
-  const [winCoinsAmount, setWinCoinsAmount] = useState(100);
+  const [winCoinsAmount, setWinCoinsAmount] = useState(200);
   const coinsRef = useRef(null);
   const coinCounterRef = useRef(null);
   const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  // useEffect(() => {
+  //   if (typeof window === "undefined") return;
 
-    const betParam = searchParams.get("betAmount");
-    if (betParam && !isNaN(betParam)) {
-      setWinCoinsAmount(parseFloat(betParam));
-    } else {
-      setWinCoinsAmount("Invalid bet amount");
-      return;
-    }
-  }, [router.query.betAmount]);
+  //   const betParam = searchParams.get("betAmount");
+  //   if (betParam && !isNaN(betParam)) {
+  //     setWinCoinsAmount(parseFloat(betParam));
+  //   } else {
+  //     setWinCoinsAmount("Invalid bet amount");
+  //     return;
+  //   }
+  // }, [router.query.betAmount]);
 
   useEffect(() => {
     if (router.query.player1Bool !== undefined) {
@@ -88,9 +88,11 @@ export default function WinPage() {
   useEffect(() => {
     const storedWallet = sessionStorage.getItem("selectedWallet");
     const storedTokens = sessionStorage.getItem("fakeTokens");
+    const betAmount = sessionStorage.getItem("betAmount");
     if (storedWallet) {
       setSelectedWallet(JSON.parse(storedWallet));
       setFakeTokens(parseInt(storedTokens, 10));
+      setWinCoinsAmount(parseInt(betAmount * 2, 10));
     }
     // checkWalletConnection();
   }, []);
@@ -264,7 +266,7 @@ export default function WinPage() {
                 {showClaimedCoins && (
                   <>
                     {/* Multiple coins flying from center to exact coin counter position */}
-                    {[...Array(8)].map((_, i) => (
+                    {[...Array(25)].map((_, i) => (
                       <motion.div
                         key={`flying-coin-${i}`}
                         className="fixed text-yellow-400 text-4xl font-bold pointer-events-none z-50"
@@ -305,7 +307,7 @@ export default function WinPage() {
                         }}
                         exit={{ opacity: 0 }}
                         transition={{
-                          duration: 1.5 + i * 0.1,
+                          duration: 0.5 + i * 0.1,
                           delay: i * 0.05,
                           ease: "easeOut",
                         }}

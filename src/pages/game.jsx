@@ -148,7 +148,7 @@ const formatTime = (seconds) => {
           setOpponentLeft(true);
           setGameOver(true);
           updateStatus();
-          router.push(`/win?betAmount=${betAmount * 2}`);
+          router.push(`/win`);
         }
       });
 
@@ -230,7 +230,7 @@ const formatTime = (seconds) => {
       setGameOver(true);
       if (gameRef.current.turn() !== (playerColor === "white" ? "w" : "b")) {
         // setShowWinModal(true);
-        router.push(`/win?betAmount=${betAmount * 2}`);
+        router.push(`/win`);
       } else {
         // setShowBadLuckModal(true);
         router.push("/lost");
@@ -331,32 +331,32 @@ const formatTime = (seconds) => {
         onError={() => console.error("Chess.js failed to load")}
       />
       <Script
-  src="https://code.jquery.com/jquery-3.7.0.min.js"
-  strategy="beforeInteractive"
-  onLoad={() => {
+        src="https://code.jquery.com/jquery-3.7.0.min.js"
+        strategy="beforeInteractive"
+        onLoad={() => {
           console.log("jQuery loaded");
           setScriptsReady(false); // Reset to ensure next script waits
         }}
-  onError={() => console.error("jQuery CDN failed")}
-/>
-<Script
-  src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"
-  strategy="beforeInteractive"
-  onLoad={() => {
+        onError={() => console.error("jQuery CDN failed")}
+      />
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"
+        strategy="beforeInteractive"
+        onLoad={() => {
           console.log("Chess.js loaded");
           setScriptsReady(false); // Reset again
         }}
-  onError={() => console.error("Chess.js failed")}
-/>
+        onError={() => console.error("Chess.js failed")}
+      />
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js"
         strategy="beforeInteractive"
         onLoad={() => {
-            console.log("Chessboard.js loaded");
-            setScriptsReady(false); // Reset again
+          console.log("Chessboard.js loaded");
+          setScriptsReady(false); // Reset again
         }}
         onError={() => console.error("Chessboard.js failed to load")}
-        />
+      />
       <Script
         src="/js/chessboard-1.0.0.min.js"
         strategy="beforeInteractive"
@@ -366,7 +366,7 @@ const formatTime = (seconds) => {
         }}
         onError={() => console.error("Chessboard.js failed to load")}
       />
-      
+
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
           <div className="flex justify-between items-center max-w-7xl mx-auto">
