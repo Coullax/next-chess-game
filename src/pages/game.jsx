@@ -59,21 +59,21 @@ export default function ChessGame() {
       });
 
       // Check all dependencies
-      if (
-        !window.jQuery ||
-        !window.Chess ||
-        !window.Chessboard ||
-        !boardRef.current
-      ) {
-        console.error("Missing dependencies:", {
-          jQuery: !!window.jQuery,
-          Chess: !!window.Chess,
-          Chessboard: !!window.Chessboard,
-          boardRef: !!boardRef.current,
-        });
-        setStatus("Failed to load game dependencies");
-        return;
-      }
+    //   if (
+    //     !window.jQuery ||
+    //     !window.Chess ||
+    //     !window.Chessboard ||
+    //     !boardRef.current
+    //   ) {
+    //     console.error("Missing dependencies:", {
+    //       jQuery: !!window.jQuery,
+    //       Chess: !!window.Chess,
+    //       Chessboard: !!window.Chessboard,
+    //       boardRef: !!boardRef.current,
+    //     });
+    //     setStatus("Failed to load game dependencies");
+    //     return;
+    //   }
 
       gameRef.current = new window.Chess();
       console.log("Game initialized with FEN:", gameRef.current.fen());
