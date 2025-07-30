@@ -763,7 +763,7 @@ const formatTime = (seconds) => {
                 Royal Chess Arena
               </h1>
             </div>
-            <h1 className="uppercase text-2xl md:text-3xl font-bold">
+            <h1 className={` ${playerColor === "black" ? 'bg-white text-black' : ' bg-black text-white'} rounded-xl uppercase text-xl px-4 py-1 md:text-3xl font-bold`}>
               {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)}{" "}
               Player
             </h1>
