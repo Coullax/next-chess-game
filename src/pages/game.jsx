@@ -262,32 +262,23 @@ export default function ChessGame() {
         <script src="https://code.jquery.com/jquery-3.7.0.min.js" />
       </Head>
       <Script
-        src="/js/jquery-3.7.0.min.js"
-        strategy="beforeInteractive"
-        onLoad={() => {
-          console.log("jQuery loaded");
-          setScriptsReady(false); // Reset to ensure next script waits
-        }}
-        onError={() => console.error("jQuery failed to load")}
-      />
-      <Script
-        src="/js/chess-0.10.3.min.js"
-        strategy="beforeInteractive"
-        onLoad={() => {
-          console.log("Chess.js loaded");
-          setScriptsReady(false); // Reset again
-        }}
-        onError={() => console.error("Chess.js failed to load")}
-      />
-      <Script
-        src="/js/chessboard-1.0.0.min.js"
-        strategy="beforeInteractive"
-        onLoad={() => {
-          console.log("Chessboard.js loaded");
-          setScriptsReady(true); // Set true only when all are loaded
-        }}
-        onError={() => console.error("Chessboard.js failed to load")}
-      />
+  src="https://code.jquery.com/jquery-3.7.0.min.js"
+  strategy="beforeInteractive"
+  onLoad={() => console.log("jQuery loaded")}
+  onError={() => console.error("jQuery CDN failed")}
+/>
+<Script
+  src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"
+  strategy="beforeInteractive"
+  onLoad={() => console.log("Chess.js loaded")}
+  onError={() => console.error("Chess.js failed")}
+/>
+<Script
+  src="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js"
+  strategy="beforeInteractive"
+  onLoad={() => console.log("Chessboard.js loaded")}
+  onError={() => console.error("Chessboard.js failed")}
+/>
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
           <div className="flex justify-between items-center max-w-[1550px] mx-auto">
