@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 
 export default function WinPage() {
   const router = useRouter();
@@ -13,6 +14,19 @@ export default function WinPage() {
   const [winCoinsAmount, setWinCoinsAmount] = useState(100);
   const coinsRef = useRef(null);
   const coinCounterRef = useRef(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const betParam = searchParams.get("betAmount");
+    if (betParam && !isNaN(betParam)) {
+      setWinCoinsAmount(parseFloat(betParam));
+    } else {
+      setWinCoinsAmount("Invalid bet amount");
+      return;
+    }
+  }, [router.query.betAmount]);
 
   useEffect(() => {
     if (router.query.player1Bool !== undefined) {
@@ -32,11 +46,14 @@ export default function WinPage() {
       // Start the animation
       setIsAnimating(true);
       setShowClaimedCoins(true);
-      
+
       // Wait for animation to complete before updating tokens
       setTimeout(() => {
-        setFakeTokens(prev => prev + winCoinsAmount);
-        sessionStorage.setItem("fakeTokens", (fakeTokens + winCoinsAmount).toString());
+        setFakeTokens((prev) => prev + winCoinsAmount);
+        sessionStorage.setItem(
+          "fakeTokens",
+          (fakeTokens + winCoinsAmount).toString()
+        );
         setIsAnimating(false);
       }, 2000); // Animation duration
 
@@ -219,7 +236,7 @@ export default function WinPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
         <header className="p-6">
           <div className="flex justify-between items-center max-w-7xl mx-auto">
-             <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-2xl">♚</span>
               </div>
@@ -228,9 +245,12 @@ export default function WinPage() {
               </h1>
             </div>
 
-            <div className="text-2xl text-yellow-400 md:text-3xl font-bold relative" ref={coinCounterRef}>
+            <div
+              className="text-2xl text-yellow-400 md:text-3xl font-bold relative"
+              ref={coinCounterRef}
+            >
               🪙
-              <motion.span 
+              <motion.span
                 className="ml-3"
                 key={fakeTokens} // This will trigger animation when fakeTokens changes
                 initial={{ scale: 1 }}
@@ -239,7 +259,6 @@ export default function WinPage() {
               >
                 {fakeTokens}
               </motion.span>
-              
               {/* Animated coins that fly to the counter */}
               <AnimatePresence>
                 {showClaimedCoins && (
@@ -250,75 +269,88 @@ export default function WinPage() {
                         key={`flying-coin-${i}`}
                         className="fixed text-yellow-400 text-4xl font-bold pointer-events-none z-50"
                         style={{
-                          left: '50%',
-                          top: '50%',
-                          transform: 'translate(-50%, -50%)'
+                          left: "50%",
+                          top: "50%",
+                          transform: "translate(-50%, -50%)",
                         }}
-                        initial={{ 
+                        initial={{
                           x: 0,
                           y: 0,
                           scale: 1,
                           opacity: 1,
-                          rotate: 0
+                          rotate: 0,
                         }}
-                        animate={{ 
-                          x: coinCounterRef.current ? 
-                            coinCounterRef.current.getBoundingClientRect().left + 
-                            coinCounterRef.current.getBoundingClientRect().width / 2 - 
-                            window.innerWidth / 2 + (Math.random() * 40 - 20) : 
-                            window.innerWidth / 2 - 100,
-                          y: coinCounterRef.current ? 
-                            coinCounterRef.current.getBoundingClientRect().top + 
-                            coinCounterRef.current.getBoundingClientRect().height / 2 - 
-                            window.innerHeight / 2 + (Math.random() * 20 - 10) : 
-                            -window.innerHeight / 2 + 80,
+                        animate={{
+                          x: coinCounterRef.current
+                            ? coinCounterRef.current.getBoundingClientRect()
+                                .left +
+                              coinCounterRef.current.getBoundingClientRect()
+                                .width /
+                                2 -
+                              window.innerWidth / 2 +
+                              (Math.random() * 40 - 20)
+                            : window.innerWidth / 2 - 100,
+                          y: coinCounterRef.current
+                            ? coinCounterRef.current.getBoundingClientRect()
+                                .top +
+                              coinCounterRef.current.getBoundingClientRect()
+                                .height /
+                                2 -
+                              window.innerHeight / 2 +
+                              (Math.random() * 20 - 10)
+                            : -window.innerHeight / 2 + 80,
                           scale: 0.6,
                           opacity: 0,
-                          rotate: 360
+                          rotate: 360,
                         }}
                         exit={{ opacity: 0 }}
-                        transition={{ 
-                          duration: 1.5 + (i * 0.1),
+                        transition={{
+                          duration: 1.5 + i * 0.1,
                           delay: i * 0.05,
-                          ease: "easeOut"
+                          ease: "easeOut",
                         }}
                       >
                         🪙
                       </motion.div>
                     ))}
-                    
+
                     {/* Main +20 text animation to exact counter position */}
                     <motion.div
                       className="fixed text-yellow-400 text-3xl font-bold pointer-events-none z-50"
                       style={{
-                        left: '50%',
-                        top: '50%',
-                        transform: 'translate(-50%, -50%)'
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
                       }}
-                      initial={{ 
+                      initial={{
                         x: 0,
                         y: 0,
                         scale: 1,
-                        opacity: 1
+                        opacity: 1,
                       }}
-                      animate={{ 
-                        x: coinCounterRef.current ? 
-                          coinCounterRef.current.getBoundingClientRect().left + 
-                          coinCounterRef.current.getBoundingClientRect().width / 2 - 
-                          window.innerWidth / 2 : 
-                          window.innerWidth / 2 - 120,
-                        y: coinCounterRef.current ? 
-                          coinCounterRef.current.getBoundingClientRect().top + 
-                          coinCounterRef.current.getBoundingClientRect().height / 2 - 
-                          window.innerHeight / 2 : 
-                          -window.innerHeight / 2 + 60,
+                      animate={{
+                        x: coinCounterRef.current
+                          ? coinCounterRef.current.getBoundingClientRect()
+                              .left +
+                            coinCounterRef.current.getBoundingClientRect()
+                              .width /
+                              2 -
+                            window.innerWidth / 2
+                          : window.innerWidth / 2 - 120,
+                        y: coinCounterRef.current
+                          ? coinCounterRef.current.getBoundingClientRect().top +
+                            coinCounterRef.current.getBoundingClientRect()
+                              .height /
+                              2 -
+                            window.innerHeight / 2
+                          : -window.innerHeight / 2 + 60,
                         scale: 0.8,
-                        opacity: 0
+                        opacity: 0,
                       }}
                       exit={{ opacity: 0 }}
-                      transition={{ 
+                      transition={{
                         duration: 2,
-                        ease: "easeInOut"
+                        ease: "easeInOut",
                       }}
                       onAnimationComplete={() => {
                         setShowClaimedCoins(false);
@@ -355,7 +387,7 @@ export default function WinPage() {
               }}
             /> */}
 
-            <div className=" relative h-[70dvh] z-10 flex flex-col justify-center items-center " >
+            <div className=" relative h-[70dvh] z-10 flex flex-col justify-center items-center ">
               <div className=" mx-auto flex px-4 py-3 z-10 flex-col bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white w-fit justify-center items-center">
                 <div className="mb-4 text-center">
                   <svg
@@ -370,21 +402,29 @@ export default function WinPage() {
                   </svg>
                 </div>
                 <div className="text-center z-10">
-                  <h1 className=" !text-4xl !font-bold">Congratulations, You Win!</h1>
+                  <h1 className=" !text-4xl !font-bold">
+                    Congratulations, You Win!
+                  </h1>
                 </div>
                 <div className="my-3 relative" ref={coinsRef}>
-                  <motion.h1 
+                  <motion.h1
                     className="text-yellow-400 !text-lg"
-                    animate={isAnimating ? { 
-                      scale: [1, 1.1, 1], 
-                      opacity: [1, 0.7, 1] 
-                    } : {}}
+                    animate={
+                      isAnimating
+                        ? {
+                            scale: [1, 1.1, 1],
+                            opacity: [1, 0.7, 1],
+                          }
+                        : {}
+                    }
                     transition={{ duration: 0.5, repeat: isAnimating ? 3 : 0 }}
                   >
                     🪙{" "}
-                    <span className="font-bold text-lg text-yellow-400">{winCoinsAmount} Coins</span>
+                    <span className="font-bold text-lg text-yellow-400">
+                      {winCoinsAmount} Coins
+                    </span>
                   </motion.h1>
-                  
+
                   {/* Floating coins animation */}
                   <AnimatePresence>
                     {isAnimating && (
@@ -393,23 +433,23 @@ export default function WinPage() {
                           <motion.div
                             key={i}
                             className="absolute text-yellow-400 text-2xl pointer-events-none"
-                            initial={{ 
-                              x: 0, 
-                              y: 0, 
+                            initial={{
+                              x: 0,
+                              y: 0,
                               opacity: 1,
-                              scale: 0 
+                              scale: 0,
                             }}
-                            animate={{ 
+                            animate={{
                               x: Math.random() * 200 - 100,
                               y: -50 - Math.random() * 50,
                               opacity: 0,
                               scale: 1,
-                              rotate: 360
+                              rotate: 360,
                             }}
-                            transition={{ 
+                            transition={{
                               duration: 1.5,
                               delay: i * 0.1,
-                              ease: "easeOut"
+                              ease: "easeOut",
                             }}
                           >
                             🪙
@@ -424,8 +464,8 @@ export default function WinPage() {
                     onClick={claimWinningBet}
                     disabled={isAnimating}
                     className={`btn btn-lg fw-bold border-white ${
-                      isAnimating 
-                        ? "btn-secondary opacity-50 cursor-not-allowed" 
+                      isAnimating
+                        ? "btn-secondary opacity-50 cursor-not-allowed"
                         : "btn-light bg-white"
                     }`}
                     whileHover={!isAnimating ? { scale: 1.05 } : {}}
