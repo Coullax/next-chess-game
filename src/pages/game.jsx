@@ -26,6 +26,30 @@ export default function ChessGame() {
   const [betAmount, setBetAmount] = useState(0);
   const [opponentLeft, setOpponentLeft] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
+  const [whiteTime, setWhiteTime] = useState(60); // 30 minutes in seconds
+const [blackTime, setBlackTime] = useState(60); // 30 minutes in seconds
+
+
+useEffect(() => {
+  if (!gameHasStarted || gameOver || !gameRef.current) return;
+
+  const timer = setInterval(() => {
+    if (gameRef.current.turn() === "w") {
+      setWhiteTime((prev) => (prev > 0 ? prev - 1 : 0));
+    } else {
+      setBlackTime((prev) => (prev > 0 ? prev - 1 : 0));
+    }
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [gameHasStarted, gameOver]);
+
+// Add formatTime helper function inside ChessGame component
+const formatTime = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+};
 
   useEffect(() => {
     if (!scriptsReady) return;
@@ -460,9 +484,9 @@ export default function ChessGame() {
               )}
             </main>
             <div className="min-h-[45vh] w-[30%]">
-              <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
-                30:00:00
-              </div>
+            <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
+  {playerColor === "white" ? formatTime(whiteTime) : formatTime(blackTime)}
+</div>
               <div className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[350px] text-white">
                 <div className="flex items-center border-b border-white/20 pb-3 justify-start space-x-3">
                   <div className="h-3 rounded-full bg-green-100 aspect-square"></div>
