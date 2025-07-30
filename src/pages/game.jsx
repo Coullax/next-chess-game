@@ -861,7 +861,7 @@ const formatTime = (seconds) => {
                       key={index}
                       src={`/img/chesspieces/wikipedia/${playerColor.charAt(
                         0
-                      )}${piece}.png`}
+                      )}${piece.toUpperCase()}.png`}
                       alt={`Captured ${piece}`}
                       style={{ width: "50px", height: "50px" }}
                     />

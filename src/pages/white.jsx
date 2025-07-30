@@ -126,6 +126,7 @@ export default function WhiteGame() {
           const executedMove = gameRef.current.move(move);
           if (executedMove && move.captured) {
             setCapturedPieces(prev => [...prev, move.captured]);
+            console.log("Captured pieces:", move.captured);
           }
           if (boardInstanceRef.current) {
             boardInstanceRef.current.position(gameRef.current.fen());
@@ -346,7 +347,7 @@ export default function WhiteGame() {
                   {capturedPieces.map((piece, index) => (
                             <Image
                             key={index}
-                            src={`/img/chesspieces/wikipedia/w${piece}.png`}
+                            src={`/img/chesspieces/wikipedia/w${piece.toUpperCase()}.png`}
                             alt={`Captured ${piece}`}
                             width= {50}
                              height={50}

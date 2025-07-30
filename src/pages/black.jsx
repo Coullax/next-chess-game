@@ -417,7 +417,7 @@ export default function BlackGame() {
                         {capturedPieces.map((piece, index) => (
                             <Image
                                 key={index}
-                                src={`/img/chesspieces/wikipedia/b${piece}.png`}
+                                src={`/img/chesspieces/wikipedia/b${piece.toUpperCase()}.png`}
                                 alt={`Captured ${piece}`}
                                 width= {50}
                                  height={50}
