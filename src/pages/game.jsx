@@ -912,7 +912,7 @@ const formatTime = (seconds) => {
                   </div>
 
                   {/* Test button for black player */}
-                  {playerColor === "black" && gameRef.current?.turn() === "b" && (
+                  {/* {playerColor === "black" && gameRef.current?.turn() === "b" && (
                     <button
                       onClick={() => {
                         console.log("🧪 TESTING: Force move e7 to e5");
@@ -931,7 +931,7 @@ const formatTime = (seconds) => {
                     >
                       🧪 Test Move (e7→e5)
                     </button>
-                  )}
+                  )} */}
                 </div>
                 {gameOver && (
                   <button
