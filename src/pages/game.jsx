@@ -1098,44 +1098,7 @@ export default function ChessGame() {
           </footer>
         </div>
 
-        {/* Win Modal */}
-        {showWinModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white text-black p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-bold mb-4">You Win!</h2>
-              <p>Claim your bet of ${betAmount}</p>
-              <button
-                onClick={claimBet}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Claim Bet
-              </button>
-              <button
-                onClick={() => setShowWinModal(false)}
-                className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Bad Luck Modal */}
-        {showBadLuckModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white text-black p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-bold mb-4">Bad Luck!</h2>
-              <p>You lost the game.</p>
-              <button
-                onClick={() => setShowBadLuckModal(false)}
-                className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-
+        
         {/* Rematch Request Modal */}
         {showRematchRequest && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

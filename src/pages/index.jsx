@@ -324,7 +324,7 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                       onClick={createGame}
-                      className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-2"
+                      className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-2 cursor-pointer"
                     >
                       <span className="text-xl">⚔️</span>
                       <span>Create Game</span>
@@ -332,7 +332,7 @@ export default function Home() {
 
                     <button
                       onClick={joinGame}
-                      className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2"
+                      className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2 cursor-pointer"
                     >
                       <span className="text-xl">🏰</span>
                       <span>Join Game</span>

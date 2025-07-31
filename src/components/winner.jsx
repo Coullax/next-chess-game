@@ -35,7 +35,7 @@ export default function Winner({winner, betAmount, playerColor}) {
 
   return (
     // <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-black relative overflow-hidden flex items-center justify-center p-4">
-    <div className=" fixed top-0 left-0 w-full h-dvh bg-gradient-to-br text-white from-slate-900 via-purple-900 to-slate-900 overflow-hidden flex items-center justify-center p-4">
+    <div className=" fixed top-0 left-0 w-full h-dvh bg-gradient-to-br text-white from-slate-900 via-purple-900 to-slate-900 overflow-hidden flex items-center justify-center p-4 z-30">
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -558,7 +558,7 @@ export default function Winner({winner, betAmount, playerColor}) {
         <div className=" w-full flex justify-center items-center z-10 space-x-5 mt-5">
           <Button
             onClick={() => window.location.href = '/'}
-            className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border-2 border-red-400 shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-105"
+            className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border-2 border-red-400 shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
             size="lg"
           >
             <Home className="w-6 h-6 mr-2" />
@@ -566,7 +566,7 @@ export default function Winner({winner, betAmount, playerColor}) {
           </Button>
           <Button
             // onClick={handlePlayAgain}
-            className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105"
+            className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
             size="lg"
           >
             <RotateCcw className="w-6 h-6 mr-2" />
