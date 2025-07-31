@@ -846,7 +846,7 @@ const formatTime = (seconds) => {
                 ref={boardRef}
                 style={{ width: "100%", margin: "auto" }}
               ></div>
-              {/* {capturedPieces.length > 0 && (
+              {capturedPieces.length > 0 && (
                 <div
                   style={{
                     marginBottom: playerColor === "white" ? "20px" : "0",
@@ -867,7 +867,7 @@ const formatTime = (seconds) => {
                     />
                   ))}
                 </div>
-              )} */}
+              )}
             </main>
             <div className="min-h-[45vh] w-[30%]">
             <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
