@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Head from "next/head";
 import Script from "next/script";
 import io from "socket.io-client";
+import Winner from "@/components/winner";
 
 // Remove global socket variable and manage it within the component
 export default function ChessGame() {
@@ -22,19 +23,27 @@ export default function ChessGame() {
   const socketRef = useRef(null); // Use ref instead of global variable
   const gameParamsRef = useRef(null); // Store game parameters
   const [scriptsReady, setScriptsReady] = useState(false);
+  const [capturedPieces, setCapturedPieces] = useState([]);
+  const [playerColor, setPlayerColor] = useState("white");
+  const [betAmount, setBetAmount] = useState(0);
+  const [opponentLeft, setOpponentLeft] = useState(false);
+  const [isReconnecting, setIsReconnecting] = useState(false);
+  const [whiteTime, setWhiteTime] = useState(1800); // 30 minutes in seconds
+  const [blackTime, setBlackTime] = useState(1800); // 30 minutes in seconds
   const [scriptsLoaded, setScriptsLoaded] = useState({
     jquery: false,
     chess: false,
-    chessboard: false
+    chessboard: false,
   });
   const [isInitializing, setIsInitializing] = useState(false); // Add initialization flag
+  const [winner, setWinner] = useState(null); // Track winner state
 
   // Initialize game parameters once on mount
   useEffect(() => {
     gameParamsRef.current = {
       color: searchParams.get("color"),
       code: searchParams.get("code"),
-      bet: searchParams.get("bet")
+      bet: searchParams.get("bet"),
     };
     // console.log("🔧 Game parameters initialized:", gameParamsRef.current);
 
@@ -78,7 +87,7 @@ export default function ChessGame() {
       const scriptsStatus = {
         jquery: !!window.jQuery,
         chess: !!window.Chess,
-        chessboard: !!window.Chessboard
+        chessboard: !!window.Chessboard,
       };
 
       // console.log("Existing scripts found:", scriptsStatus);
@@ -98,27 +107,32 @@ export default function ChessGame() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       // Only try to load scripts if they're not already available
-      if ((!scriptsLoaded.chess && !window.Chess) || (!scriptsLoaded.chessboard && !window.Chessboard)) {
+      if (
+        (!scriptsLoaded.chess && !window.Chess) ||
+        (!scriptsLoaded.chessboard && !window.Chessboard)
+      ) {
         // console.log("Some essential scripts failed to load, trying CDN fallbacks...");
 
         if (!scriptsLoaded.chess && !window.Chess) {
           // console.log("Loading Chess.js from CDN...");
-          const chessScript = document.createElement('script');
-          chessScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js';
+          const chessScript = document.createElement("script");
+          chessScript.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js";
           chessScript.onload = () => {
             // console.log("Chess.js CDN fallback loaded");
-            setScriptsLoaded(prev => ({ ...prev, chess: true }));
+            setScriptsLoaded((prev) => ({ ...prev, chess: true }));
           };
           document.head.appendChild(chessScript);
         }
 
         if (!scriptsLoaded.chessboard && !window.Chessboard) {
           // console.log("Loading Chessboard.js from CDN...");
-          const chessboardScript = document.createElement('script');
-          chessboardScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js';
+          const chessboardScript = document.createElement("script");
+          chessboardScript.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js";
           chessboardScript.onload = () => {
             // console.log("Chessboard.js CDN fallback loaded");
-            setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
+            setScriptsLoaded((prev) => ({ ...prev, chessboard: true }));
           };
           document.head.appendChild(chessboardScript);
         }
@@ -126,11 +140,11 @@ export default function ChessGame() {
         // Try to load jQuery but don't block on it
         if (!scriptsLoaded.jquery && !window.jQuery) {
           // console.log("Loading jQuery from CDN...");
-          const jqueryScript = document.createElement('script');
-          jqueryScript.src = 'https://code.jquery.com/jquery-3.7.0.min.js';
+          const jqueryScript = document.createElement("script");
+          jqueryScript.src = "https://code.jquery.com/jquery-3.7.0.min.js";
           jqueryScript.onload = () => {
             // console.log("jQuery CDN fallback loaded");
-            setScriptsLoaded(prev => ({ ...prev, jquery: true }));
+            setScriptsLoaded((prev) => ({ ...prev, jquery: true }));
           };
           jqueryScript.onerror = () => {
             // console.log("jQuery fallback failed, continuing without it");
@@ -144,14 +158,6 @@ export default function ChessGame() {
 
     return () => clearTimeout(timeout);
   }, [scriptsLoaded]);
-  const [capturedPieces, setCapturedPieces] = useState([]);
-  const [playerColor, setPlayerColor] = useState("white");
-  const [betAmount, setBetAmount] = useState(0);
-  const [opponentLeft, setOpponentLeft] = useState(false);
-  const [isReconnecting, setIsReconnecting] = useState(false);
-  const [whiteTime, setWhiteTime] = useState(1800); // 30 minutes in seconds
-const [blackTime, setBlackTime] = useState(1800); // 30 minutes in seconds
-
 
   // Check if all scripts are loaded
   useEffect(() => {
@@ -174,27 +180,28 @@ const [blackTime, setBlackTime] = useState(1800); // 30 minutes in seconds
     }
   }, [scriptsLoaded]);
 
+  useEffect(() => {
+    if (!gameHasStarted || gameOver || !gameRef.current) return;
 
-useEffect(() => {
-  if (!gameHasStarted || gameOver || !gameRef.current) return;
+    const timer = setInterval(() => {
+      if (gameRef.current.turn() === "w") {
+        setWhiteTime((prev) => (prev > 0 ? prev - 1 : 0));
+      } else {
+        setBlackTime((prev) => (prev > 0 ? prev - 1 : 0));
+      }
+    }, 1000);
 
-  const timer = setInterval(() => {
-    if (gameRef.current.turn() === "w") {
-      setWhiteTime((prev) => (prev > 0 ? prev - 1 : 0));
-    } else {
-      setBlackTime((prev) => (prev > 0 ? prev - 1 : 0));
-    }
-  }, 1000);
+    return () => clearInterval(timer);
+  }, [gameHasStarted, gameOver]);
 
-  return () => clearInterval(timer);
-}, [gameHasStarted, gameOver]);
-
-// Add formatTime helper function inside ChessGame component
-const formatTime = (seconds) => {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-};
+  // Add formatTime helper function inside ChessGame component
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
   useEffect(() => {
     // console.log("useEffect triggered - scriptsReady:", scriptsReady);
@@ -211,7 +218,7 @@ const formatTime = (seconds) => {
         socketRef.current.disconnect();
         socketRef.current = null;
         // Wait a bit to ensure cleanup is complete
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       const colorParam = gameParamsRef.current?.color;
@@ -226,13 +233,16 @@ const formatTime = (seconds) => {
         // console.log("🔧 INITIALIZATION - Setting player color to:", colorParam.toLowerCase());
         setPlayerColor(colorParam.toLowerCase());
       } else {
-        console.error("🔧 INITIALIZATION - Invalid color parameter:", colorParam);
+        console.error(
+          "🔧 INITIALIZATION - Invalid color parameter:",
+          colorParam
+        );
         setStatus("Invalid color parameter");
         setIsInitializing(false);
         return;
       }
 
-      if (!code ) {
+      if (!code) {
         setStatus("Invalid game code");
         setIsInitializing(false);
         return;
@@ -248,14 +258,10 @@ const formatTime = (seconds) => {
 
       // console.log("Checking dependencies...");
       // Wait a bit for scripts to be fully available
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Check all dependencies
-      if (
-        !window.Chess ||
-        !window.Chessboard ||
-        !boardRef.current
-      ) {
+      if (!window.Chess || !window.Chessboard || !boardRef.current) {
         console.error("Missing dependencies:", {
           Chess: !!window.Chess,
           Chessboard: !!window.Chessboard,
@@ -282,7 +288,10 @@ const formatTime = (seconds) => {
       }
 
       // Clean up previous board instance
-      if (boardInstanceRef.current && typeof boardInstanceRef.current.destroy === 'function') {
+      if (
+        boardInstanceRef.current &&
+        typeof boardInstanceRef.current.destroy === "function"
+      ) {
         // console.log("Destroying previous board instance");
         boardInstanceRef.current.destroy();
         boardInstanceRef.current = null;
@@ -305,7 +314,7 @@ const formatTime = (seconds) => {
         },
         onDragEnd: () => {
           // console.log("Drag ended");
-        }
+        },
       };
 
       try {
@@ -341,7 +350,10 @@ const formatTime = (seconds) => {
             const code = gameParamsRef.current?.code;
             const color = gameParamsRef.current?.color;
             if (code && color) {
-              socketRef.current.emit("joinGame", { code, color: color.toLowerCase() });
+              socketRef.current.emit("joinGame", {
+                code,
+                color: color.toLowerCase(),
+              });
             }
           }
         }, 500);
@@ -383,7 +395,8 @@ const formatTime = (seconds) => {
           setGameOver(true);
           updateStatus();
           socketRef.current.disconnect(); // Disconnect after opponent left
-          router.push(`/win`);
+          // router.push(`/win`);
+          setWinner(playerColor);
         }
       });
 
@@ -391,7 +404,11 @@ const formatTime = (seconds) => {
         setIsReconnecting(true);
         const code = gameParamsRef.current?.code;
         const color = gameParamsRef.current?.color;
-        if (code && color) socketRef.current.emit("joinGame", { code, color: color.toLowerCase() });
+        if (code && color)
+          socketRef.current.emit("joinGame", {
+            code,
+            color: color.toLowerCase(),
+          });
       });
 
       socketRef.current.on("rematchRequest", () => {
@@ -402,7 +419,9 @@ const formatTime = (seconds) => {
         console.error("Socket error:", error);
         if (error.message === "Color already taken") {
           // console.log("Color already taken - showing error message");
-          setStatus("This color is already taken in this game. Please go back and try a different game or color.");
+          setStatus(
+            "This color is already taken in this game. Please go back and try a different game or color."
+          );
           // Don't auto-redirect, let user decide what to do
         } else {
           setStatus(`Error: ${error.message}`);
@@ -431,7 +450,10 @@ const formatTime = (seconds) => {
         const colorParam = gameParamsRef.current?.color;
         if (code && colorParam) {
           // console.log("Sending leaveGame event:", { code, color: colorParam.toLowerCase() });
-          socketRef.current.emit("leaveGame", { code, color: colorParam.toLowerCase() });
+          socketRef.current.emit("leaveGame", {
+            code,
+            color: colorParam.toLowerCase(),
+          });
         }
         socketRef.current.removeAllListeners();
         socketRef.current.disconnect();
@@ -448,7 +470,10 @@ const formatTime = (seconds) => {
         const code = gameParamsRef.current?.code;
         const colorParam = gameParamsRef.current?.color;
         if (code && colorParam) {
-          socketRef.current.emit("leaveGame", { code, color: colorParam.toLowerCase() });
+          socketRef.current.emit("leaveGame", {
+            code,
+            color: colorParam.toLowerCase(),
+          });
         }
         socketRef.current.removeAllListeners();
         socketRef.current.disconnect();
@@ -456,24 +481,30 @@ const formatTime = (seconds) => {
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       // console.log("⚠️ COMPONENT UNMOUNT: Final cleanup - this should only happen when leaving the game page");
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
 
       if (socketRef.current) {
         const code = gameParamsRef.current?.code;
         const colorParam = gameParamsRef.current?.color;
         if (code && colorParam) {
           // console.log("Final leaveGame event:", { code, color: colorParam.toLowerCase() });
-          socketRef.current.emit("leaveGame", { code, color: colorParam.toLowerCase() });
+          socketRef.current.emit("leaveGame", {
+            code,
+            color: colorParam.toLowerCase(),
+          });
         }
         socketRef.current.removeAllListeners();
         socketRef.current.disconnect();
         socketRef.current = null;
       }
-      if (boardInstanceRef.current && typeof boardInstanceRef.current.destroy === 'function') {
+      if (
+        boardInstanceRef.current &&
+        typeof boardInstanceRef.current.destroy === "function"
+      ) {
         boardInstanceRef.current.destroy();
         boardInstanceRef.current = null;
       }
@@ -573,7 +604,10 @@ const formatTime = (seconds) => {
     // console.log("📤 Sending move to server:", { ...theMove, captured: move.captured || null });
 
     if (socketRef.current) {
-      socketRef.current.emit("move", { ...theMove, captured: move.captured || null });
+      socketRef.current.emit("move", {
+        ...theMove,
+        captured: move.captured || null,
+      });
     }
     checkGameState();
   };
@@ -604,10 +638,12 @@ const formatTime = (seconds) => {
 
       if (currentTurn !== playerTurn) {
         // console.log("Player wins! Redirecting to /win");
-        setTimeout(() => router.push(`/win`), 1000); // Add delay
+        // setTimeout(() => router.push(`/win`), 1000); // Add delay
+        setWinner(playerColor);
       } else {
         // console.log("Player loses! Redirecting to /lost");
-        setTimeout(() => router.push("/lost"), 1000); // Add delay
+        // setTimeout(() => router.push("/lost"), 1000); // Add delay
+        setWinner(playerColor === "white" ? "black" : "white");
       }
     } else if (gameRef.current.in_draw()) {
       // console.log("Draw detected!");
@@ -736,27 +772,27 @@ const formatTime = (seconds) => {
         strategy="afterInteractive"
         onLoad={() => {
           // console.log("jQuery CDN loaded successfully");
-          setScriptsLoaded(prev => ({ ...prev, jquery: true }));
+          setScriptsLoaded((prev) => ({ ...prev, jquery: true }));
         }}
         onReady={() => {
           // This fires when script is ready, even if already loaded
           if (window.jQuery && !scriptsLoaded.jquery) {
             // console.log("jQuery already available");
-            setScriptsLoaded(prev => ({ ...prev, jquery: true }));
+            setScriptsLoaded((prev) => ({ ...prev, jquery: true }));
           }
         }}
         onError={(e) => {
           console.error("jQuery CDN failed to load:", e);
           // Try local fallback
-          const script = document.createElement('script');
-          script.src = '/js/jquery-3.7.0.min.js';
+          const script = document.createElement("script");
+          script.src = "/js/jquery-3.7.0.min.js";
           script.onload = () => {
             // console.log("jQuery local fallback loaded successfully");
-            setScriptsLoaded(prev => ({ ...prev, jquery: true }));
+            setScriptsLoaded((prev) => ({ ...prev, jquery: true }));
           };
           script.onerror = () => {
             // console.log("jQuery not available, continuing without it");
-            setScriptsLoaded(prev => ({ ...prev, jquery: false }));
+            setScriptsLoaded((prev) => ({ ...prev, jquery: false }));
           };
           document.head.appendChild(script);
         }}
@@ -766,23 +802,24 @@ const formatTime = (seconds) => {
         strategy="afterInteractive"
         onLoad={() => {
           // console.log("Chess.js loaded successfully");
-          setScriptsLoaded(prev => ({ ...prev, chess: true }));
+          setScriptsLoaded((prev) => ({ ...prev, chess: true }));
         }}
         onReady={() => {
           // This fires when script is ready, even if already loaded
           if (window.Chess && !scriptsLoaded.chess) {
             // console.log("Chess.js already available");
-            setScriptsLoaded(prev => ({ ...prev, chess: true }));
+            setScriptsLoaded((prev) => ({ ...prev, chess: true }));
           }
         }}
         onError={(e) => {
           // console.error("Chess.js failed to load:", e);
           // Fallback to CDN
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js';
+          const script = document.createElement("script");
+          script.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js";
           script.onload = () => {
             // console.log("Chess.js CDN loaded successfully");
-            setScriptsLoaded(prev => ({ ...prev, chess: true }));
+            setScriptsLoaded((prev) => ({ ...prev, chess: true }));
           };
           document.head.appendChild(script);
         }}
@@ -792,23 +829,24 @@ const formatTime = (seconds) => {
         strategy="afterInteractive"
         onLoad={() => {
           // console.log("Chessboard.js loaded successfully");
-          setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
+          setScriptsLoaded((prev) => ({ ...prev, chessboard: true }));
         }}
         onReady={() => {
           // This fires when script is ready, even if already loaded
           if (window.Chessboard && !scriptsLoaded.chessboard) {
             // console.log("Chessboard.js already available");
-            setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
+            setScriptsLoaded((prev) => ({ ...prev, chessboard: true }));
           }
         }}
         onError={(e) => {
           console.error("Chessboard.js failed to load:", e);
           // Fallback to CDN
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js';
+          const script = document.createElement("script");
+          script.src =
+            "https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard.min.js";
           script.onload = () => {
             // console.log("Chessboard.js CDN loaded successfully");
-            setScriptsLoaded(prev => ({ ...prev, chessboard: true }));
+            setScriptsLoaded((prev) => ({ ...prev, chessboard: true }));
           };
           document.head.appendChild(script);
         }}
@@ -825,7 +863,13 @@ const formatTime = (seconds) => {
                 Royal Chess Arena
               </h1>
             </div>
-            <h1 className={` ${playerColor === "black" ? 'bg-white text-black' : ' bg-black text-white'} rounded-xl uppercase text-xl px-4 py-1 md:text-3xl font-bold`}>
+            <h1
+              className={` ${
+                playerColor === "black"
+                  ? "bg-white text-black"
+                  : " bg-black text-white"
+              } rounded-xl uppercase text-xl px-4 py-1 md:text-3xl font-bold`}
+            >
               {playerColor.charAt(0).toUpperCase() + playerColor.slice(1)}{" "}
               Player
             </h1>
@@ -842,7 +886,8 @@ const formatTime = (seconds) => {
                 className="inline-block mr-3"
               />
 
-              <span className="text-white"> Winner Will Receive : </span><span className="inline-block ml-3"> {betAmount * 2} Coins</span>
+              <span className="text-white"> Winner Will Receive : </span>
+              <span className="inline-block ml-3"> {betAmount * 2} Coins</span>
             </div>
             <div className="min-h-[45vh] w-[30%]">
               {/* <h3
@@ -932,9 +977,11 @@ const formatTime = (seconds) => {
               )}
             </main>
             <div className="min-h-[45vh] w-[30%]">
-            <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
-  {playerColor === "white" ? formatTime(whiteTime) : formatTime(blackTime)}
-</div>
+              <div className="text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-3">
+                {playerColor === "white"
+                  ? formatTime(whiteTime)
+                  : formatTime(blackTime)}
+              </div>
               <div className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[350px] text-white">
                 <div className="flex items-center border-b border-white/20 pb-3 justify-start space-x-3">
                   <div className="h-3 rounded-full bg-green-100 aspect-square"></div>
@@ -952,8 +999,16 @@ const formatTime = (seconds) => {
                       alt="information--v2"
                       className="inline-block"
                     /> */}
-                    <img width="25" height="25" src="https://img.icons8.com/flat-round/50/info.png" alt="info"   className="inline-block"/>
-                    <span className=" inline-block pl-3 text-xl uppercase">Status</span>
+                    <img
+                      width="25"
+                      height="25"
+                      src="https://img.icons8.com/flat-round/50/info.png"
+                      alt="info"
+                      className="inline-block"
+                    />
+                    <span className=" inline-block pl-3 text-xl uppercase">
+                      Status
+                    </span>
                   </h3>
                   {/* Debug info */}
                   <div className="mt-2 text-lg text-gray-400">
@@ -963,12 +1018,34 @@ const formatTime = (seconds) => {
                     <div>jQuery: {scriptsLoaded.jquery ? "✓" : "✗"} (Optional)</div> */}
                     <div>Game Started: {gameHasStarted ? "✓" : "✗"}</div>
                     <div>Game Over: {gameOver ? "✓" : "✗"}</div>
-                    <div>Player Color: <span className="text-yellow-300 uppercase">{playerColor}</span></div>
-                    <div>Current Turn: <span className="text-yellow-300">{gameRef.current?.turn() === "w" ? "White" : gameRef.current?.turn() === "b" ? "Black" : "N/A"}</span></div>
-                    <div>Can I Move?: <span className="text-yellow-300">{
-                      gameRef.current?.turn() === (playerColor === "white" ? "w" : "b") ? "✓ YES" : "✗ NO"
-                    }</span></div>
-                    <div>Move Count: {gameRef.current?.history()?.length || 0}</div>
+                    <div>
+                      Player Color:{" "}
+                      <span className="text-yellow-300 uppercase">
+                        {playerColor}
+                      </span>
+                    </div>
+                    <div>
+                      Current Turn:{" "}
+                      <span className="text-yellow-300">
+                        {gameRef.current?.turn() === "w"
+                          ? "White"
+                          : gameRef.current?.turn() === "b"
+                          ? "Black"
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div>
+                      Can I Move?:{" "}
+                      <span className="text-yellow-300">
+                        {gameRef.current?.turn() ===
+                        (playerColor === "white" ? "w" : "b")
+                          ? "✓ YES"
+                          : "✗ NO"}
+                      </span>
+                    </div>
+                    <div>
+                      Move Count: {gameRef.current?.history()?.length || 0}
+                    </div>
                     <div>Initializing: {isInitializing ? "✓" : "✗"}</div>
                     <div>Reconnecting: {isReconnecting ? "✓" : "✗"}</div>
                   </div>
@@ -1081,6 +1158,7 @@ const formatTime = (seconds) => {
           </div>
         )}
       </div>
+      {gameOver && (<Winner winner={winner} betAmount={betAmount * 2} playerColor={playerColor} />)}
     </>
   );
 }
