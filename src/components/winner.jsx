@@ -6,7 +6,7 @@ import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Winner({winner, betAmount, playerColor}) {
+export default function Winner({ winner, betAmount, playerColor }) {
   // const [winner, setWinner] = useState("white");
   const [wCapturedPieces, setWCapturedPieces] = useState(["p", "n", "b", "r"]);
   const [bCapturedPieces, setBCapturedPieces] = useState([
@@ -16,7 +16,7 @@ export default function Winner({winner, betAmount, playerColor}) {
     "b",
     "r",
   ]);
-  
+
   // Animation states
   const [isAnimating, setIsAnimating] = useState(false);
   const [showCoinCollection, setShowCoinCollection] = useState(false);
@@ -51,15 +51,22 @@ export default function Winner({winner, betAmount, playerColor}) {
       <Card className="w-full max-w-7xl py-14 px-5 mx-auto relative z-10 !bg-gradient-to-b !from-yellow-900/20 !to-red-900/20 !backdrop-blur-md border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 rounded-lg blur-sm opacity-75 animate-pulse" />
         <div className="absolute inset-[2px] bg-gradient-to-b from-slate-900 to-black rounded-lg" />
+        <div className=" z-10">
+          <h1 className="text-6xl  font-bold pb-12 text-center">
+            {(playerColor === "white" && winner === "white") ||
+            (playerColor === "black" && winner === "black")
+              ? "YOU WIN!"
+              : "YOU LOSE!"}
+          </h1>
+        </div>
 
         <div className=" w-full grid grid-cols-3 z-10">
-          
           <div className=" w-full">
-            {playerColor === 'white' ? (
+            {playerColor === "white" ? (
               // White player on left when playerColor is 'white'
               <div className=" flex flex-col justify-center items-center space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
-                  {winner === 'white' && (
+                  {winner === "white" && (
                     <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
@@ -72,26 +79,26 @@ export default function Winner({winner, betAmount, playerColor}) {
                   height={100}
                   className=" border-4 border-yellow-600 rounded-lg"
                 />
-                <motion.div 
-                  className="flex justify-center items-center space-x-2" 
-                  ref={winner === 'white' ? winnerPlayerRef : null}
+                <motion.div
+                  className="flex justify-center items-center space-x-2"
+                  ref={winner === "white" ? winnerPlayerRef : null}
                   animate={
-                    showCoinCollection && winner === 'white'
+                    showCoinCollection && winner === "white"
                       ? {
                           scale: [1, 1.1, 1],
                           textShadow: [
                             "0 0 0px #facc15",
                             "0 0 20px #facc15",
                             "0 0 10px #facc15",
-                            "0 0 0px #facc15"
-                          ]
+                            "0 0 0px #facc15",
+                          ],
                         }
                       : {}
                   }
                   transition={{
                     duration: 0.8,
                     delay: 2,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                 >
                   <span className="text-white text-xl font-semibold">You</span>
@@ -104,7 +111,7 @@ export default function Winner({winner, betAmount, playerColor}) {
               // Black player on left when playerColor is 'black'
               <div className=" flex flex-col justify-center items-center space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
-                  {winner === 'black' && (
+                  {winner === "black" && (
                     <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
@@ -117,26 +124,26 @@ export default function Winner({winner, betAmount, playerColor}) {
                   height={100}
                   className=" border-4 border-yellow-600 rounded-lg"
                 />
-                <motion.div 
-                  className="flex justify-center items-center space-x-2" 
-                  ref={winner === 'black' ? winnerPlayerRef : null}
+                <motion.div
+                  className="flex justify-center items-center space-x-2"
+                  ref={winner === "black" ? winnerPlayerRef : null}
                   animate={
-                    showCoinCollection && winner === 'black'
+                    showCoinCollection && winner === "black"
                       ? {
                           scale: [1, 1.1, 1],
                           textShadow: [
                             "0 0 0px #facc15",
-                            "0 0 20px #facc15", 
+                            "0 0 20px #facc15",
                             "0 0 10px #facc15",
-                            "0 0 0px #facc15"
-                          ]
+                            "0 0 0px #facc15",
+                          ],
                         }
                       : {}
                   }
                   transition={{
                     duration: 0.8,
                     delay: 2,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                 >
                   <span className="text-white text-xl font-semibold">You</span>
@@ -188,9 +195,12 @@ export default function Winner({winner, betAmount, playerColor}) {
           </div>
           <div className="flex flex-col items-center justify-center space-y-4">
             <Image src="/win.png" alt="Winner" width={200} height={200} />
-            <div className=" flex justify-center items-center space-x-2 relative" ref={coinsSourceRef}>
+            <div
+              className=" flex justify-center items-center space-x-2 relative"
+              ref={coinsSourceRef}
+            >
               <Image src="/coins.png" alt="Winner" width={100} height={90} />
-              <motion.h1 
+              <motion.h1
                 className="text-yellow-400 font-bold text-4xl"
                 animate={
                   isAnimating
@@ -201,14 +211,14 @@ export default function Winner({winner, betAmount, playerColor}) {
                       }
                     : {}
                 }
-                transition={{ 
-                  duration: 0.6, 
+                transition={{
+                  duration: 0.6,
                   repeat: isAnimating ? 3 : 0,
                   x: {
                     duration: 0.1,
                     repeat: isAnimating ? 30 : 0,
-                    repeatType: "reverse"
-                  }
+                    repeatType: "reverse",
+                  },
                 }}
               >
                 {betAmount} Coins
@@ -220,21 +230,35 @@ export default function Winner({winner, betAmount, playerColor}) {
                   <>
                     {/* Multiple coins flying from 100 Coins to Winner Player */}
                     {[...Array(25)].map((_, i) => {
-                      const sourceRect = coinsSourceRef.current?.getBoundingClientRect();
-                      const targetRect = winnerPlayerRef.current?.getBoundingClientRect();
-                      
-                      const sourceX = sourceRect 
-                        ? sourceRect.left + sourceRect.width / 2 - window.innerWidth / 2
+                      const sourceRect =
+                        coinsSourceRef.current?.getBoundingClientRect();
+                      const targetRect =
+                        winnerPlayerRef.current?.getBoundingClientRect();
+
+                      const sourceX = sourceRect
+                        ? sourceRect.left +
+                          sourceRect.width / 2 -
+                          window.innerWidth / 2
                         : 0;
-                      const sourceY = sourceRect 
-                        ? sourceRect.top + sourceRect.height / 2 - window.innerHeight / 2
+                      const sourceY = sourceRect
+                        ? sourceRect.top +
+                          sourceRect.height / 2 -
+                          window.innerHeight / 2
                         : 0;
-                      
-                      const targetX = targetRect 
-                        ? targetRect.left + targetRect.width / 2 - window.innerWidth / 2 + (Math.random() * 40 - 20)
-                        : winner === 'white' ? -window.innerWidth / 4 : window.innerWidth / 4;
-                      const targetY = targetRect 
-                        ? targetRect.top + targetRect.height / 2 - window.innerHeight / 2 + (Math.random() * 20 - 10)
+
+                      const targetX = targetRect
+                        ? targetRect.left +
+                          targetRect.width / 2 -
+                          window.innerWidth / 2 +
+                          (Math.random() * 40 - 20)
+                        : winner === "white"
+                        ? -window.innerWidth / 4
+                        : window.innerWidth / 4;
+                      const targetY = targetRect
+                        ? targetRect.top +
+                          targetRect.height / 2 -
+                          window.innerHeight / 2 +
+                          (Math.random() * 20 - 10)
                         : -window.innerHeight / 4;
 
                       return (
@@ -262,16 +286,21 @@ export default function Winner({winner, betAmount, playerColor}) {
                           }}
                           exit={{ opacity: 0 }}
                           transition={{
-                            duration: 1.5 + (Math.random() * 0.5),
+                            duration: 1.5 + Math.random() * 0.5,
                             delay: i * 0.04,
                             ease: [0.25, 0.46, 0.45, 0.94],
                             scale: {
                               times: [0, 0.3, 1],
-                              ease: "easeOut"
-                            }
+                              ease: "easeOut",
+                            },
                           }}
                         >
-                          <Image src="/coin.png" alt="Coin" width={80} height={80} />
+                          <Image
+                            src="/coin.png"
+                            alt="Coin"
+                            width={80}
+                            height={80}
+                          />
                         </motion.div>
                       );
                     })}
@@ -287,14 +316,20 @@ export default function Winner({winner, betAmount, playerColor}) {
                           transform: "translate(-50%, -50%)",
                         }}
                         initial={{
-                          x: coinsSourceRef.current 
-                            ? coinsSourceRef.current.getBoundingClientRect().left + 
-                              coinsSourceRef.current.getBoundingClientRect().width / 2 - 
+                          x: coinsSourceRef.current
+                            ? coinsSourceRef.current.getBoundingClientRect()
+                                .left +
+                              coinsSourceRef.current.getBoundingClientRect()
+                                .width /
+                                2 -
                               window.innerWidth / 2
                             : 0,
-                          y: coinsSourceRef.current 
-                            ? coinsSourceRef.current.getBoundingClientRect().top + 
-                              coinsSourceRef.current.getBoundingClientRect().height / 2 - 
+                          y: coinsSourceRef.current
+                            ? coinsSourceRef.current.getBoundingClientRect()
+                                .top +
+                              coinsSourceRef.current.getBoundingClientRect()
+                                .height /
+                                2 -
                               window.innerHeight / 2
                             : 0,
                           scale: 0,
@@ -302,16 +337,22 @@ export default function Winner({winner, betAmount, playerColor}) {
                           rotate: 0,
                         }}
                         animate={{
-                          x: coinsSourceRef.current 
-                            ? coinsSourceRef.current.getBoundingClientRect().left + 
-                              coinsSourceRef.current.getBoundingClientRect().width / 2 - 
-                              window.innerWidth / 2 + 
+                          x: coinsSourceRef.current
+                            ? coinsSourceRef.current.getBoundingClientRect()
+                                .left +
+                              coinsSourceRef.current.getBoundingClientRect()
+                                .width /
+                                2 -
+                              window.innerWidth / 2 +
                               Math.cos((i / 6) * Math.PI * 2) * 80
                             : Math.cos((i / 6) * Math.PI * 2) * 80,
-                          y: coinsSourceRef.current 
-                            ? coinsSourceRef.current.getBoundingClientRect().top + 
-                              coinsSourceRef.current.getBoundingClientRect().height / 2 - 
-                              window.innerHeight / 2 + 
+                          y: coinsSourceRef.current
+                            ? coinsSourceRef.current.getBoundingClientRect()
+                                .top +
+                              coinsSourceRef.current.getBoundingClientRect()
+                                .height /
+                                2 -
+                              window.innerHeight / 2 +
                               Math.sin((i / 6) * Math.PI * 2) * 60
                             : Math.sin((i / 6) * Math.PI * 2) * 60,
                           scale: [0, 1, 0],
@@ -338,13 +379,19 @@ export default function Winner({winner, betAmount, playerColor}) {
                       }}
                       initial={{
                         x: winnerPlayerRef.current
-                          ? winnerPlayerRef.current.getBoundingClientRect().left +
-                            winnerPlayerRef.current.getBoundingClientRect().width / 2 -
+                          ? winnerPlayerRef.current.getBoundingClientRect()
+                              .left +
+                            winnerPlayerRef.current.getBoundingClientRect()
+                              .width /
+                              2 -
                             window.innerWidth / 2
                           : 0,
                         y: winnerPlayerRef.current
-                          ? winnerPlayerRef.current.getBoundingClientRect().top +
-                            winnerPlayerRef.current.getBoundingClientRect().height / 2 -
+                          ? winnerPlayerRef.current.getBoundingClientRect()
+                              .top +
+                            winnerPlayerRef.current.getBoundingClientRect()
+                              .height /
+                              2 -
                             window.innerHeight / 2
                           : 0,
                         scale: 0,
@@ -373,29 +420,44 @@ export default function Winner({winner, betAmount, playerColor}) {
                         transform: "translate(-50%, -50%)",
                       }}
                       initial={{
-                        x: coinsSourceRef.current 
-                          ? coinsSourceRef.current.getBoundingClientRect().left + 
-                            coinsSourceRef.current.getBoundingClientRect().width / 2 - 
+                        x: coinsSourceRef.current
+                          ? coinsSourceRef.current.getBoundingClientRect()
+                              .left +
+                            coinsSourceRef.current.getBoundingClientRect()
+                              .width /
+                              2 -
                             window.innerWidth / 2
                           : 0,
-                        y: coinsSourceRef.current 
-                          ? coinsSourceRef.current.getBoundingClientRect().top + 
-                            coinsSourceRef.current.getBoundingClientRect().height / 2 - 
-                            window.innerHeight / 2 - 30
+                        y: coinsSourceRef.current
+                          ? coinsSourceRef.current.getBoundingClientRect().top +
+                            coinsSourceRef.current.getBoundingClientRect()
+                              .height /
+                              2 -
+                            window.innerHeight / 2 -
+                            30
                           : -30,
                         scale: 1,
                         opacity: 1,
                       }}
                       animate={{
                         x: winnerPlayerRef.current
-                          ? winnerPlayerRef.current.getBoundingClientRect().left +
-                            winnerPlayerRef.current.getBoundingClientRect().width / 2 -
+                          ? winnerPlayerRef.current.getBoundingClientRect()
+                              .left +
+                            winnerPlayerRef.current.getBoundingClientRect()
+                              .width /
+                              2 -
                             window.innerWidth / 2
-                          : winner === 'white' ? -window.innerWidth / 4 : window.innerWidth / 4,
+                          : winner === "white"
+                          ? -window.innerWidth / 4
+                          : window.innerWidth / 4,
                         y: winnerPlayerRef.current
-                          ? winnerPlayerRef.current.getBoundingClientRect().top +
-                            winnerPlayerRef.current.getBoundingClientRect().height / 2 -
-                            window.innerHeight / 2 - 40
+                          ? winnerPlayerRef.current.getBoundingClientRect()
+                              .top +
+                            winnerPlayerRef.current.getBoundingClientRect()
+                              .height /
+                              2 -
+                            window.innerHeight / 2 -
+                            40
                           : -window.innerHeight / 4,
                         scale: [1, 1.3, 0.8],
                         opacity: [1, 1, 0],
@@ -406,8 +468,8 @@ export default function Winner({winner, betAmount, playerColor}) {
                         ease: [0.25, 0.46, 0.45, 0.94],
                         scale: {
                           times: [0, 0.3, 1],
-                          ease: "easeOut"
-                        }
+                          ease: "easeOut",
+                        },
                       }}
                       onAnimationComplete={() => {
                         setShowCoinCollection(false);
@@ -421,11 +483,11 @@ export default function Winner({winner, betAmount, playerColor}) {
             </div>
           </div>
           <div className=" w-full">
-            {playerColor === 'white' ? (
+            {playerColor === "white" ? (
               // Black player on right when playerColor is 'white'
               <div className=" flex flex-col justify-center items-center space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
-                  {winner === 'black' && (
+                  {winner === "black" && (
                     <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
@@ -438,29 +500,31 @@ export default function Winner({winner, betAmount, playerColor}) {
                   height={100}
                   className=" border-4 border-yellow-600 rounded-lg"
                 />
-                <motion.div 
-                  className="flex justify-center items-center space-x-2" 
-                  ref={winner === 'black' ? winnerPlayerRef : null}
+                <motion.div
+                  className="flex justify-center items-center space-x-2"
+                  ref={winner === "black" ? winnerPlayerRef : null}
                   animate={
-                    showCoinCollection && winner === 'black'
+                    showCoinCollection && winner === "black"
                       ? {
                           scale: [1, 1.1, 1],
                           textShadow: [
                             "0 0 0px #facc15",
-                            "0 0 20px #facc15", 
+                            "0 0 20px #facc15",
                             "0 0 10px #facc15",
-                            "0 0 0px #facc15"
-                          ]
+                            "0 0 0px #facc15",
+                          ],
                         }
                       : {}
                   }
                   transition={{
                     duration: 0.8,
                     delay: 2,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                 >
-                  <span className="text-white text-xl font-semibold">Black</span>
+                  <span className="text-white text-xl font-semibold">
+                    Black
+                  </span>
                   <span className="text-yellow-400 text-xl font-bold">
                     Player
                   </span>
@@ -470,7 +534,7 @@ export default function Winner({winner, betAmount, playerColor}) {
               // White player on right when playerColor is 'black'
               <div className=" flex flex-col justify-center items-center space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
-                  {winner === 'white' && (
+                  {winner === "white" && (
                     <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
@@ -483,29 +547,31 @@ export default function Winner({winner, betAmount, playerColor}) {
                   height={100}
                   className=" border-4 border-yellow-600 rounded-lg"
                 />
-                <motion.div 
-                  className="flex justify-center items-center space-x-2" 
-                  ref={winner === 'white' ? winnerPlayerRef : null}
+                <motion.div
+                  className="flex justify-center items-center space-x-2"
+                  ref={winner === "white" ? winnerPlayerRef : null}
                   animate={
-                    showCoinCollection && winner === 'white'
+                    showCoinCollection && winner === "white"
                       ? {
                           scale: [1, 1.1, 1],
                           textShadow: [
                             "0 0 0px #facc15",
                             "0 0 20px #facc15",
                             "0 0 10px #facc15",
-                            "0 0 0px #facc15"
-                          ]
+                            "0 0 0px #facc15",
+                          ],
                         }
                       : {}
                   }
                   transition={{
                     duration: 0.8,
                     delay: 2,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                 >
-                  <span className="text-white text-xl font-semibold">White</span>
+                  <span className="text-white text-xl font-semibold">
+                    White
+                  </span>
                   <span className="text-yellow-400 text-xl font-bold">
                     Player
                   </span>
@@ -552,7 +618,6 @@ export default function Winner({winner, betAmount, playerColor}) {
               </div>
             </div> */}
           </div>
-          
         </div>
 
         <div className=" w-full flex justify-center items-center z-10 space-x-5 mt-5">
