@@ -46,6 +46,31 @@ export default function ChessGame() {
     }
   }, []); // Only run once on mount
 
+
+  useEffect(() => {
+    // Inject the blink CSS into the document
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = blinkStyle;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+  
+  const blinkStyle = `
+  .blink-king {
+    animation: blink 1s linear infinite;
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  @keyframes blink {
+    0% { background-color: rgba(255, 0, 0, 0.5); }
+    50% { background-color: rgba(255, 0, 0, 0.2); }
+    100% { background-color: rgba(255, 0, 0, 0.5); }
+  }
+`;
+
+
   // Check for already loaded scripts on component mount
   useEffect(() => {
     // console.log("Checking for already loaded scripts...");
@@ -589,6 +614,43 @@ const formatTime = (seconds) => {
       setGameOver(true);
       setStatus("Game over, drawn position");
     }
+
+    // Manage king highlight for check
+    if (boardRef.current) {
+      // Remove existing blink class from all squares
+      const squares = boardRef.current.querySelectorAll('.blink-king');
+      squares.forEach(square => square.classList.remove('blink-king'));
+
+      // Highlight king if in check
+      if (gameRef.current.in_check() && boardInstanceRef.current) {
+        const board = gameRef.current.board();
+        let kingSquare = null;
+        const color = gameRef.current.turn(); // 'w' or 'b'
+
+        // Iterate through the 8x8 board to find the king's square
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            const piece = board[i][j];
+            if (piece && piece.type === 'k' && piece.color === color) {
+              // Convert board indices to square notation (e.g., [0,4] -> 'e8')
+              const file = String.fromCharCode(97 + j); // a-h
+              const rank = 8 - i; // 8-1
+              kingSquare = `${file}${rank}`;
+              break;
+            }
+          }
+          if (kingSquare) break;
+        }
+
+        if (kingSquare) {
+          const squareElement = boardRef.current.querySelector(`[data-square="${kingSquare}"]`);
+          if (squareElement) {
+            squareElement.classList.add('blink-king');
+          }
+        }
+      }
+    }
+
     updateStatus();
   };
 
