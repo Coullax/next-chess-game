@@ -1,2 +1,395 @@
-/*! chessboard.js v1.0.0 | (c) 2019 Chris Oakman | MIT License chessboardjs.com/license */
-.clearfix-7da63{clear:both}.board-b72b1{border:2px solid #404040;box-sizing:content-box}.square-55d63{float:left;position:relative;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.white-1e1d7{background-color:#f0d9b5;color:#b58863}.black-3c85d{background-color:#b58863;color:#f0d9b5}.highlight1-32417,.highlight2-9c5d2{box-shadow:inset 0 0 3px 3px #ff0}.notation-322f9{cursor:default;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;position:absolute}.alpha-d2270{bottom:1px;right:3px}.numeric-fc462{top:2px;left:2px}
+/* Modern Chessboard CSS - Version 1.0.0 */
+
+/* Clearfix utility */
+.clearfix-7da63 {
+  clear: both;
+}
+
+/* Main board container with modern styling */
+.board-b72b1 {
+  border: 2px solid #333;
+  box-sizing: content-box;
+  background: linear-gradient(145deg, #f5f5dc 0%, #e8e8dc 100%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Individual chess squares */
+.square-55d63 {
+  float: left;
+  position: relative;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover effects for squares */
+.square-55d63:hover {
+  transform: scale(1.02);
+  z-index: 1;
+}
+
+/* White squares styling */
+.white-1e1d7 {
+  background-color: #f5f5dc;
+  color: #2d5016;
+}
+
+/* Black squares styling */
+.black-3c85d {
+  background-color: #2d5016;
+  color: #f5f5dc;
+}
+
+/* Primary highlight (selected piece) */
+.highlight1-32417 {
+  box-shadow: inset 0 0 5px 5px #ffeb3b;
+  background-color: rgba(255, 235, 59, 0.3);
+  transition: box-shadow 0.3s ease;
+  z-index: 2;
+}
+
+/* Secondary highlight (possible moves) */
+.highlight2-9c5d2 {
+  box-shadow: inset 0 0 5px 5px #ff9800;
+  background-color: rgba(255, 152, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+  z-index: 2;
+}
+
+/* Checkmate highlight with pulsing animation */
+.checkmate-highlight-ff9a1 {
+  background: linear-gradient(45deg, #ffcccc 0%, #ff9999 100%);
+  box-shadow: inset 0 0 10px #ff4444;
+  animation: pulse 1.5s infinite;
+  z-index: 3;
+}
+
+/* Move path indicators */
+.move-path-8e4d2 {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(0, 230, 64, 0.7);
+  border: 2px solid #00e640;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* Last move highlight */
+.last-move-highlight-7b3d9 {
+  background: linear-gradient(135deg, #ffff99 0%, #fff3e0 100%);
+  box-shadow: 0 0 8px rgba(255, 255, 153, 0.5);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Board notation (coordinates) */
+.notation-322f9 {
+  cursor: default;
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  position: absolute;
+  font-weight: 500;
+  color: #555;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Alphabetical notation (a-h) */
+.alpha-d2270 {
+  bottom: 2px;
+  right: 4px;
+}
+
+/* Numeric notation (1-8) */
+.numeric-fc462 {
+  top: 2px;
+  left: 4px;
+}
+
+/* Piece styling enhancements */
+.piece-417db {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: grab;
+}
+
+.piece-417db:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+  z-index: 10;
+}
+
+/* Dragging states */
+.dragging-2d3e4 {
+  opacity: 0.7;
+  transform: rotate(5deg);
+  z-index: 10;
+}
+
+/* Valid drop target */
+.drop-target-5f6g7 {
+  background-color: rgba(0, 255, 0, 0.2);
+  box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Invalid drop target */
+.invalid-drop-8h9i0 {
+  background-color: rgba(255, 0, 0, 0.2);
+  box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.5);
+}
+
+/* Check highlight */
+.check-highlight-1a2b3 {
+  background: linear-gradient(45deg, #ff6b6b 0%, #ffa726 100%);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+  animation: checkPulse 1s infinite alternate;
+}
+
+/* Capture highlight */
+.capture-highlight-4c5d6 {
+  background: radial-gradient(circle, rgba(255, 0, 0, 0.3) 0%, transparent 70%);
+  border: 3px solid #ff0000;
+  animation: captureFlash 0.5s ease-out;
+}
+
+/* Promotion square */
+.promotion-square-7e8f9 {
+  background: linear-gradient(45deg, #9c27b0 0%, #673ab7 100%);
+  box-shadow: 0 0 20px rgba(156, 39, 176, 0.8);
+  animation: promotionGlow 2s infinite alternate;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+}
+
+@keyframes checkPulse {
+  0% { 
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+  }
+  100% { 
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.9);
+  }
+}
+
+@keyframes captureFlash {
+  0% { 
+    transform: scale(1);
+    border-width: 3px;
+  }
+  50% { 
+    transform: scale(1.1);
+    border-width: 5px;
+  }
+  100% { 
+    transform: scale(1);
+    border-width: 3px;
+  }
+}
+
+@keyframes promotionGlow {
+  0% { 
+    box-shadow: 0 0 20px rgba(156, 39, 176, 0.8);
+  }
+  100% { 
+    box-shadow: 0 0 30px rgba(156, 39, 176, 1);
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Move animation */
+.move-animation-1x2y3 {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* En passant highlight */
+.en-passant-9z8y7 {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 193, 7, 0.3),
+    rgba(255, 193, 7, 0.3) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  border: 2px dashed #ffc107;
+}
+
+/* Castling highlight */
+.castling-6x5w4 {
+  background: linear-gradient(90deg, rgba(33, 150, 243, 0.3) 0%, rgba(3, 169, 244, 0.3) 100%);
+  border: 2px solid #2196f3;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .board-b72b1 {
+    border-width: 1px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .square-55d63 {
+    transition: none; /* Disable transitions on small screens for performance */
+  }
+  
+  .square-55d63:hover {
+    transform: none;
+  }
+  
+  .notation-322f9 {
+    font-size: 12px;
+  }
+  
+  .move-path-8e4d2 {
+    width: 15px;
+    height: 15px;
+  }
+  
+  .piece-417db:active {
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 400px) {
+  .notation-322f9 {
+    font-size: 10px;
+  }
+  
+  .alpha-d2270 {
+    bottom: 1px;
+    right: 2px;
+  }
+  
+  .numeric-fc462 {
+    top: 1px;
+    left: 2px;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .board-b72b1 {
+    background: linear-gradient(145deg, #4a4a4a 0%, #2d2d2d 100%);
+    border-color: #555;
+  }
+  
+  .white-1e1d7 {
+    background-color: #f5f5dc;
+    color: #2d5016;
+  }
+  
+  .black-3c85d {
+    background-color: #2d5016;
+    color: #f5f5dc;
+  }
+  
+  .notation-322f9 {
+    color: #ccc;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .board-b72b1 {
+    border-width: 3px;
+    border-color: #000;
+  }
+  
+  .white-1e1d7 {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .black-3c85d {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .notation-322f9 {
+    font-weight: bold;
+    text-shadow: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .square-55d63,
+  .piece-417db,
+  .move-path-8e4d2,
+  .highlight1-32417,
+  .highlight2-9c5d2,
+  .last-move-highlight-7b3d9,
+  .notation-322f9 {
+    transition: none;
+  }
+  
+  .checkmate-highlight-ff9a1,
+  .check-highlight-1a2b3,
+  .capture-highlight-4c5d6,
+  .promotion-square-7e8f9 {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .board-b72b1 {
+    box-shadow: none;
+    border: 2px solid #000;
+  }
+  
+  .square-55d63 {
+    transition: none;
+  }
+  
+  .highlight1-32417,
+  .highlight2-9c5d2,
+  .checkmate-highlight-ff9a1,
+  .last-move-highlight-7b3d9 {
+    background: none !important;
+    box-shadow: none !important;
+  }
+}
