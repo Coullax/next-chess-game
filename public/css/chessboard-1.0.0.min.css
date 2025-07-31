@@ -129,20 +129,24 @@
   background-position: center;
   transition: transform 0.2s ease, filter 0.2s ease;
   cursor: grab;
+  position: relative; /* Ensure piece can be layered */
+  z-index: 10; /* Default z-index to keep pieces above squares */
 }
 
 .piece-417db:active {
   cursor: grabbing;
   transform: scale(1.1);
   filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
-  z-index: 10;
+  z-index: 20; /* Higher z-index when active */
 }
 
 /* Dragging states */
 .dragging-2d3e4 {
-  opacity: 0.7;
-  transform: rotate(5deg);
-  z-index: 10;
+  opacity: 1; /* Ensure full visibility during drag */
+  transform: scale(1.1); /* Slightly scale up for better visibility */
+  z-index: 30; /* Ensure dragging piece is above all other elements */
+  position: absolute; /* Allow smooth dragging without layout issues */
+  pointer-events: none; /* Prevent interference with drag events */
 }
 
 /* Valid drop target */
