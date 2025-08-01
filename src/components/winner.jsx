@@ -621,16 +621,16 @@ export default function Winner({ winner, betAmount, playerColor, requestRematch,
         </div>
 
         <div className=" w-full flex justify-center items-center z-10 space-x-5 mt-5">
-          <Button
+          {/* <Button
             onClick={() => window.location.href = '/'}
             className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border-2 border-red-400 shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
             size="lg"
           >
             <Home className="w-6 h-6 mr-2" />
             CAN'T PLAY AGAIN
-          </Button>
+          </Button> */}
           <Button
-            onClick={requestRematch}
+            onClick={() => window.location.href = '/'}
             className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
             size="lg"
           >

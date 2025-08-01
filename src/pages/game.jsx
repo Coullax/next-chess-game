@@ -345,6 +345,7 @@ export default function ChessGame() {
       socketRef.current.on("connect", () => {
         // console.log("Connected to server, socket ID:", socketRef.current.id);
         setIsInitializing(false); // Mark initialization as complete
+        setStatus("Connected to server, joining game...");
         // Add a small delay to ensure previous connections are cleaned up
         setTimeout(() => {
           if (socketRef.current) {
@@ -360,11 +361,23 @@ export default function ChessGame() {
         }, 500);
       });
 
+      socketRef.current.on("gameJoined", (data) => {
+        // This event should fire when successfully joined a game
+        if (data && data.message) {
+          setStatus(data.message);
+        } else {
+          const waitingFor = playerColor === "white" ? "you" : "white";
+          setStatus(`Waiting for ${waitingFor} to start the game...`);
+        }
+        updateStatus();
+      });
+
       socketRef.current.on("newMove", (move) => {
         // console.log("📦 RECEIVED MOVE:", move, "Current player:", playerColor);
         if (gameRef.current && !gameOver) {
           // console.log("📦 Before move - FEN:", gameRef.current.fen());
           // console.log("📦 Before move - Turn:", gameRef.current.turn());
+          
 
           const executedMove = gameRef.current.move(move);
 
@@ -387,7 +400,23 @@ export default function ChessGame() {
         setGameOver(false);
         setGameHasStarted(true);
         setIsReconnecting(false);
-        updateStatus();
+        setRematchRequested(false);
+        // Use setTimeout to ensure state updates are applied before status update
+        setTimeout(() => {
+          updateStatus();
+        }, 100);
+      });
+
+      socketRef.current.on("playerJoined", (data) => {
+        // Update status when a player joins
+        if (data && data.playersCount) {
+          if (data.playersCount === 1) {
+            const waitingFor = playerColor === "white" ? "black" : "white";
+            setStatus(`Waiting for ${waitingFor} player to join...`);
+          } else if (data.playersCount === 2) {
+            setStatus("Both players connected, starting game...");
+          }
+        }
       });
 
       socketRef.current.on("RestartGame", () => {
@@ -395,6 +424,7 @@ export default function ChessGame() {
         setGameOver(false);
         setGameHasStarted(true);
         setIsReconnecting(false);
+        setRematchRequested(false);
         setCapturedPieces([]);
         setOpponentLeft(false);
         setWhiteTime(1800);
@@ -430,6 +460,7 @@ export default function ChessGame() {
 
       socketRef.current.on("reconnect", () => {
         setIsReconnecting(true);
+        setStatus("Reconnecting to game...");
         const code = gameParamsRef.current?.code;
         const color = gameParamsRef.current?.color;
         if (code && color)
@@ -440,19 +471,18 @@ export default function ChessGame() {
       });
 
       socketRef.current.on("rematchRequest", () => {
-        if (!rematchRequested && !gameOver) setShowRematchRequest(true);
+        if (!rematchRequested && !gameOver) {
+          setShowRematchRequest(true);
+          setStatus("Opponent requests a rematch");
+        }
       });
 
       socketRef.current.on("error", (error) => {
         console.error("Socket error:", error);
         if (error.message === "Color already taken") {
-          // console.log("Color already taken - showing error message");
-          setStatus(
-            "This color is already taken in this game. Please go back and try a different game or color."
-          );
-          // Don't auto-redirect, let user decide what to do
+          setStatus("This color is already taken in this game. Please try a different game or color.");
         } else {
-          setStatus(`Error: ${error.message}`);
+          setStatus(`Connection error: ${error.message}`);
         }
       });
 
@@ -725,22 +755,72 @@ export default function ChessGame() {
       setStatus("Game initialization failed");
       return;
     }
-    let status = "";
-    const moveColor = gameRef.current.turn() === "w" ? "White" : "Black";
+    
+    let newStatus = "";
+    const currentTurn = gameRef.current.turn();
+    const moveColor = currentTurn === "w" ? "white" : "black";
+    const isPlayerTurn = currentTurn === (playerColor === "white" ? "w" : "b");
+    
     if (gameOver) {
-      if (opponentLeft) status = "Opponent left, you win!";
-      else if (gameRef.current.in_checkmate())
-        status = `Game over, ${moveColor} is in checkmate.`;
-      else if (gameRef.current.in_draw()) status = "Game over, drawn position";
+      if (opponentLeft) {
+        newStatus = "Opponent left, you win!";
+      } else if (gameRef.current.in_checkmate()) {
+        const winner = currentTurn === "w" ? "Black" : "White";
+        newStatus = `Game over, ${winner} wins by checkmate!`;
+      } else if (gameRef.current.in_draw()) {
+        newStatus = "Game over, drawn position";
+      } else if (gameRef.current.in_stalemate()) {
+        newStatus = "Game over, stalemate";
+      } else {
+        newStatus = "Game over";
+      }
     } else if (!gameHasStarted) {
-      status = `Waiting for ${
-        playerColor === "white" ? "black" : "white"
-      } to join`;
+      // Check if game has moves (which means it should have started)
+      const moveCount = gameRef.current.history().length;
+      if (moveCount > 0) {
+        // Game has started based on moves, update the state
+        setGameHasStarted(true);
+        // Continue to show the game status below
+        if (isPlayerTurn) {
+          newStatus = `Your turn to move`;
+        } else {
+          newStatus = `Waiting for ${moveColor} player to move`;
+        }
+        
+        // Add check status
+        if (gameRef.current.in_check()) {
+          if (isPlayerTurn) {
+            newStatus += " - You are in check!";
+          } else {
+            newStatus += ` - ${moveColor} player is in check`;
+          }
+        }
+      } else {
+        // Game hasn't actually started yet
+        const waitingFor = playerColor === "white" ? "your move" : "white's move";
+        newStatus = `Waiting for ${waitingFor} to start the game...`;
+      }
+    } else if (isReconnecting) {
+      newStatus = "Reconnecting to game...";
     } else {
-      status = `${moveColor} to move`;
-      if (gameRef.current.in_check()) status += `, ${moveColor} is in check`;
+      // Game is active - show specific player waiting messages
+      if (isPlayerTurn) {
+        newStatus = `Your turn to move`;
+      } else {
+        newStatus = `Waiting for ${moveColor} player to move`;
+      }
+      
+      // Add check status
+      if (gameRef.current.in_check()) {
+        if (isPlayerTurn) {
+          newStatus += " - You are in check!";
+        } else {
+          newStatus += ` - ${moveColor} player is in check`;
+        }
+      }
     }
-    setStatus(status);
+    
+    setStatus(newStatus);
     setPgn(gameRef.current.pgn());
   };
 
@@ -748,7 +828,7 @@ export default function ChessGame() {
     if (socketRef.current && !rematchRequested && gameOver) {
       socketRef.current.emit("rematchRequest");
       setRematchRequested(true);
-      setStatus("Rematch requested, waiting for opponent...");
+      setStatus("Rematch requested, waiting for opponent's response...");
     }
   };
 
@@ -763,25 +843,11 @@ export default function ChessGame() {
       setWinner(null);
       setCapturedPieces([]);
       setOpponentLeft(false);
-      setWhiteTime(60);
-      setBlackTime(60);
+      setWhiteTime(1800);
+      setBlackTime(1800);
+      setStatus("Preparing for rematch...");
 
-      // if (gameRef.current) {
-      //   gameRef.current = new window.Chess();
-      // }
-      // if (boardInstanceRef.current) {
-      //   boardInstanceRef.current.position("start");
-      // }
-      // updateStatus();
       setRematchStarted(true); // Track that rematch has started
-
-   
-
-      // Reinitialize game
-      // if (gameRef.current) gameRef.current = null;
-      // if (boardInstanceRef.current?.destroy) boardInstanceRef.current.destroy();
-      // gameRef.current = new window.Chess();
-      // if (boardInstanceRef.current) boardInstanceRef.current.position("start");
       updateStatus();
     }
   };
@@ -1027,7 +1093,7 @@ export default function ChessGame() {
               <div className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[350px] text-white">
                 <div className="flex items-center border-b border-white/20 pb-3 justify-start space-x-3">
                   <div className="h-3 rounded-full bg-green-100 aspect-square"></div>
-                  <h3>Anonymous</h3>
+                  <h3>{status}</h3>
                 </div>
                 <div className=" mt-3">
                   <h3
