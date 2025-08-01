@@ -56,7 +56,6 @@ export default function ChessGame() {
     }
   }, []); // Only run once on mount
 
-
   useEffect(() => {
     // Inject the blink CSS into the document
     const styleSheet = document.createElement("style");
@@ -67,7 +66,7 @@ export default function ChessGame() {
       document.head.removeChild(styleSheet);
     };
   }, []);
-  
+
   const blinkStyle = `
   .blink-king {
     animation: blink 1s linear infinite;
@@ -79,7 +78,6 @@ export default function ChessGame() {
     100% { background-color: rgba(255, 0, 0, 0.5); }
   }
 `;
-
 
   // Check for already loaded scripts on component mount
   useEffect(() => {
@@ -656,8 +654,8 @@ export default function ChessGame() {
     // Manage king highlight for check
     if (boardRef.current) {
       // Remove existing blink class from all squares
-      const squares = boardRef.current.querySelectorAll('.blink-king');
-      squares.forEach(square => square.classList.remove('blink-king'));
+      const squares = boardRef.current.querySelectorAll(".blink-king");
+      squares.forEach((square) => square.classList.remove("blink-king"));
 
       // Highlight king if in check
       if (gameRef.current.in_check() && boardInstanceRef.current) {
@@ -669,7 +667,7 @@ export default function ChessGame() {
         for (let i = 0; i < 8; i++) {
           for (let j = 0; j < 8; j++) {
             const piece = board[i][j];
-            if (piece && piece.type === 'k' && piece.color === color) {
+            if (piece && piece.type === "k" && piece.color === color) {
               // Convert board indices to square notation (e.g., [0,4] -> 'e8')
               const file = String.fromCharCode(97 + j); // a-h
               const rank = 8 - i; // 8-1
@@ -681,9 +679,11 @@ export default function ChessGame() {
         }
 
         if (kingSquare) {
-          const squareElement = boardRef.current.querySelector(`[data-square="${kingSquare}"]`);
+          const squareElement = boardRef.current.querySelector(
+            `[data-square="${kingSquare}"]`
+          );
           if (squareElement) {
-            squareElement.classList.add('blink-king');
+            squareElement.classList.add("blink-king");
           }
         }
       }
@@ -725,7 +725,7 @@ export default function ChessGame() {
   };
 
   const acceptRematch = () => {
-    debugger
+    debugger;
     if (socketRef.current && showRematchRequest) {
       socketRef.current.emit("acceptRematch");
       setShowRematchRequest(false);
@@ -1102,30 +1102,47 @@ export default function ChessGame() {
           </footer>
         </div>
 
-        
         {/* Rematch Request Modal */}
         {showRematchRequest && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white text-black p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-bold mb-4">Rematch Request</h2>
-              <p>Opponent wants a rematch. Accept?</p>
-              <button
-                onClick={acceptRematch}
-                className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 mr-2"
-              >
-                Accept
-              </button>
-              <button
-                onClick={ignoreRematch}
-                className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Ignore
-              </button>
+          <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
+            <div className=" absolute w-[25%] top-4 right-4 p-0 bg-black rounded-lg">
+              <div className=" w-full py-6 px-8 relative z-10 bg-gradient-to-b from-yellow-900/20 to-red-900/20 rounded-lg backdrop-blur-md border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 blur-sm rounded-lg opacity-75 animate-pulse" />
+                <div className="absolute inset-[2px] bg-gradient-to-b from-slate-900 to-black rounded-lg" />
+                <div className=" relative z-20 w-full">
+                  <h2 className="z-30 text-3xl font-bold mb-3 text-white">
+                    Rematch Request
+                  </h2>
+                  <p className="mb-3">Opponent wants a rematch. Accept?</p>
+                  <button
+                    onClick={acceptRematch}
+                    className="min-w-[100px] px-10 h-14 text-lg rounded-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={ignoreRematch}
+                    className="min-w-[100px] px-10 h-14 text-lg rounded-lg ml-3 font-black bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border-2 border-red-400 shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
+                  >
+                    Ignore
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
       </div>
-      {gameOver && (<Winner winner={winner} betAmount={betAmount * 2} playerColor={playerColor} requestRematch={requestRematch} showRematchRequest={showRematchRequest} acceptRematch={acceptRematch} ignoreRematch={ignoreRematch} />)}
+      {gameOver && (
+        <Winner
+          winner={winner}
+          betAmount={betAmount * 2}
+          playerColor={playerColor}
+          requestRematch={requestRematch}
+          showRematchRequest={showRematchRequest}
+          acceptRematch={acceptRematch}
+          ignoreRematch={ignoreRematch}
+        />
+      )}
     </>
   );
 }
