@@ -158,7 +158,7 @@ export default function ChessGame() {
     }, 1000); // Reduced timeout to 1 second
 
     return () => clearTimeout(timeout);
-  }, [scriptsLoaded, rematchStarted]);
+  }, [scriptsLoaded]);
 
   // Check if all scripts are loaded
   useEffect(() => {
@@ -205,10 +205,12 @@ export default function ChessGame() {
   };
 
   useEffect(() => {
+    
     // console.log("useEffect triggered - scriptsReady:", scriptsReady);
     if (!scriptsReady || isInitializing) return;
 
     const initializeGame = async () => {
+      debugger
       // console.log("Initializing game...");
       setIsInitializing(true);
 
@@ -390,6 +392,32 @@ export default function ChessGame() {
         updateStatus();
       });
 
+      socketRef.current.on("RestartGame", () => {
+        debugger
+        setGameOver(false);
+        setGameHasStarted(true);
+        setIsReconnecting(false);
+        setCapturedPieces([]);
+        setOpponentLeft(false);
+        setWhiteTime(1800);
+        setBlackTime(1800);
+        setWinner(null);
+        if (gameRef.current) gameRef.current = null;
+        if (boardInstanceRef.current?.destroy) boardInstanceRef.current.destroy();
+        gameRef.current = new window.Chess();
+        boardInstanceRef.current = window.Chessboard(boardRef.current, {
+          draggable: true,
+          position: "start",
+          onDragStart,
+          onDrop,
+          onSnapEnd,
+          pieceTheme: "/img/chesspieces/wikipedia/{piece}.png",
+          moveSpeed: "fast",
+        });
+        if (playerColor.toLowerCase() === "black") boardInstanceRef.current.flip();
+        updateStatus();
+      });
+
       socketRef.current.on("opponentLeft", (data) => {
         const playerColor = gameParamsRef.current?.color?.toLowerCase();
         if (data.winnerColor === playerColor && !gameOver) {
@@ -462,7 +490,7 @@ export default function ChessGame() {
         socketRef.current = null;
       }
     };
-  }, [scriptsReady, rematchStarted]); // Removed router and searchParams dependencies
+  }, [scriptsReady,rematchStarted]); // Removed router and searchParams dependencies
 
   // Cleanup on component unmount
   useEffect(() => {
@@ -731,20 +759,30 @@ export default function ChessGame() {
       setShowRematchRequest(false);
       setRematchRequested(false);
       setGameHasStarted(false);
-      // setGameOver(false);
+      setGameOver(false);
+      setWinner(null);
       setCapturedPieces([]);
       setOpponentLeft(false);
       setWhiteTime(60);
       setBlackTime(60);
 
-      if (gameRef.current) {
-        gameRef.current = new window.Chess();
-      }
-      if (boardInstanceRef.current) {
-        boardInstanceRef.current.position("start");
-      }
-      updateStatus();
+      // if (gameRef.current) {
+      //   gameRef.current = new window.Chess();
+      // }
+      // if (boardInstanceRef.current) {
+      //   boardInstanceRef.current.position("start");
+      // }
+      // updateStatus();
       setRematchStarted(true); // Track that rematch has started
+
+   
+
+      // Reinitialize game
+      // if (gameRef.current) gameRef.current = null;
+      // if (boardInstanceRef.current?.destroy) boardInstanceRef.current.destroy();
+      // gameRef.current = new window.Chess();
+      // if (boardInstanceRef.current) boardInstanceRef.current.position("start");
+      updateStatus();
     }
   };
 
