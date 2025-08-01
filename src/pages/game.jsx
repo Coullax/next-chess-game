@@ -37,6 +37,7 @@ export default function ChessGame() {
   });
   const [isInitializing, setIsInitializing] = useState(false); // Add initialization flag
   const [winner, setWinner] = useState(null); // Track winner state
+  const [rematchStarted, setRematchStarted] = useState(false); // Track rematch acceptance
 
   // Initialize game parameters once on mount
   useEffect(() => {
@@ -157,7 +158,7 @@ export default function ChessGame() {
     }, 1000); // Reduced timeout to 1 second
 
     return () => clearTimeout(timeout);
-  }, [scriptsLoaded]);
+  }, [scriptsLoaded, rematchStarted]);
 
   // Check if all scripts are loaded
   useEffect(() => {
@@ -383,6 +384,7 @@ export default function ChessGame() {
       });
 
       socketRef.current.on("startGame", () => {
+        setGameOver(false);
         setGameHasStarted(true);
         setIsReconnecting(false);
         updateStatus();
@@ -460,7 +462,7 @@ export default function ChessGame() {
         socketRef.current = null;
       }
     };
-  }, [scriptsReady]); // Removed router and searchParams dependencies
+  }, [scriptsReady, rematchStarted]); // Removed router and searchParams dependencies
 
   // Cleanup on component unmount
   useEffect(() => {
@@ -723,12 +725,13 @@ export default function ChessGame() {
   };
 
   const acceptRematch = () => {
+    debugger
     if (socketRef.current && showRematchRequest) {
       socketRef.current.emit("acceptRematch");
       setShowRematchRequest(false);
       setRematchRequested(false);
       setGameHasStarted(false);
-      setGameOver(false);
+      // setGameOver(false);
       setCapturedPieces([]);
       setOpponentLeft(false);
       setWhiteTime(60);
@@ -741,6 +744,7 @@ export default function ChessGame() {
         boardInstanceRef.current.position("start");
       }
       updateStatus();
+      setRematchStarted(true); // Track that rematch has started
     }
   };
 
@@ -1121,7 +1125,7 @@ export default function ChessGame() {
           </div>
         )}
       </div>
-      {gameOver && (<Winner winner={winner} betAmount={betAmount * 2} playerColor={playerColor} />)}
+      {gameOver && (<Winner winner={winner} betAmount={betAmount * 2} playerColor={playerColor} requestRematch={requestRematch} showRematchRequest={showRematchRequest} acceptRematch={acceptRematch} ignoreRematch={ignoreRematch} />)}
     </>
   );
 }
