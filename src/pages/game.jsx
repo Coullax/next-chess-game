@@ -488,7 +488,7 @@ export default function ChessGame() {
         socketRef.current = null;
       }
     };
-  }, [scriptsReady,rematchStarted]); // Removed router and searchParams dependencies
+  }, [scriptsReady]); // Removed router and searchParams dependencies
 
   // Cleanup on component unmount
   useEffect(() => {
