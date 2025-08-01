@@ -184,14 +184,32 @@ export default function ChessGame() {
 
     const timer = setInterval(() => {
       if (gameRef.current.turn() === "w") {
-        setWhiteTime((prev) => (prev > 0 ? prev - 1 : 0));
+        setWhiteTime((prev) => {
+          if (prev <= 1) {
+            // White player runs out of time, black wins
+            setGameOver(true);
+            setWinner("black");
+            setStatus("White player ran out of time - Black wins!");
+            return 0;
+          }
+          return prev - 1;
+        });
       } else {
-        setBlackTime((prev) => (prev > 0 ? prev - 1 : 0));
+        setBlackTime((prev) => {
+          if (prev <= 1) {
+            // Black player runs out of time, white wins
+            setGameOver(true);
+            setWinner("white");
+            setStatus("Black player ran out of time - White wins!");
+            return 0;
+          }
+          return prev - 1;
+        });
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [gameHasStarted, gameOver]);
+  }, [gameHasStarted, gameOver, whiteTime, blackTime]);
 
   // Add formatTime helper function inside ChessGame component
   const formatTime = (seconds) => {
