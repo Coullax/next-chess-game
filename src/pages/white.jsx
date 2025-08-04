@@ -45,7 +45,6 @@ export default function WhiteGame() {
     if (!scriptsReady) return;
 
     const initializeGame = async () => {
-      // debugger
       // await fetch("/api/socket");
       // socket = io();
 
@@ -87,7 +86,6 @@ export default function WhiteGame() {
 
 
       socket.on('startGame', function() {
-        // debugger
         console.log("Game started");
         setGameHasStarted(true);
         updateStatus();
@@ -166,7 +164,6 @@ export default function WhiteGame() {
   };
 
   const updateStatus = () => {
-    // debugger
     if (!gameRef.current) return;
     
     let status = '';
