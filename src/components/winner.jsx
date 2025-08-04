@@ -79,7 +79,7 @@ export default function Winner({
 
   return (
     // <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-black relative overflow-hidden flex items-center justify-center p-4">
-    <div className=" fixed top-0 left-0 w-full h-dvh bg-gradient-to-br text-white from-slate-900 via-purple-900 to-slate-900 overflow-hidden flex items-center justify-center p-4 z-30">
+    <div className="fixed top-0 left-0 w-full h-dvh bg-gradient-to-br text-white from-slate-900 via-purple-900 to-slate-900 overflow-hidden flex items-center justify-center p-4 z-30">
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -92,11 +92,11 @@ export default function Winner({
         }}
       />
 
-      <Card className="w-full max-w-7xl py-14 px-5 mx-auto relative z-10 !bg-gradient-to-b !from-yellow-900/20 !to-red-900/20 !backdrop-blur-md border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
+      <Card className="w-full !max-w-7xl lg:py-14 px-5 lg:mx-auto relative z-10 !bg-gradient-to-b !from-yellow-900/20 !to-red-900/20 !backdrop-blur-md border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 rounded-lg blur-sm opacity-75 animate-pulse" />
         <div className="absolute inset-[2px] bg-gradient-to-b from-slate-900 to-black rounded-lg" />
         <div className=" z-10">
-          <h1 className="text-6xl  font-bold pb-12 text-center text-white">
+          <h1 className="lg:text-6xl md:text:4xl font-bold lg:pb-12 md:pb-6 text-center text-white">
             {(playerColor === "white" && winner === "white") ||
             (playerColor === "black" && winner === "black")
               ? "YOU WIN!"
@@ -105,24 +105,26 @@ export default function Winner({
         </div>
 
         <div className=" w-full grid grid-cols-3 z-10">
-          <div className=" w-full">
+          <div className="w-full">
             {playerColor === "white" ? (
               // White player on left when playerColor is 'white'
               <div className=" flex flex-col justify-center items-center space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
                   {winner === "white" && (
-                    <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
+                    <div className="bg-green-500 py-1 lg:px-6 px-2 rounded-md text-white lg:text-2xl text-xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
                   )}
                 </div>
-                <Image
-                  src="/whitePlayer.jpg"
-                  alt="Winner"
-                  width={100}
-                  height={100}
-                  className=" border-4 border-yellow-600 rounded-lg"
-                />
+                <div className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                    <Image
+                      src="/whitePlayer.jpg"
+                      alt="Winner"
+                      fill
+                      sizes="(max-width: 768px) 64px, (max-width: 1024px) 80px, 96px"
+                      className="border-4 border-yellow-600 rounded-lg object-cover"
+                    />
+                  </div>
                 <motion.div
                   className="flex justify-center items-center space-x-2"
                   ref={winner === "white" ? winnerPlayerRef : null}
@@ -145,7 +147,7 @@ export default function Winner({
                     ease: "easeOut",
                   }}
                 >
-                  <span className="text-white text-xl font-semibold">You</span>
+                  <span className="text-white text-lg font-semibold">You</span>
                   {/* <span className="text-yellow-400 text-xl font-bold">
                     Player
                   </span> */}
@@ -153,7 +155,7 @@ export default function Winner({
               </div>
             ) : (
               // Black player on left when playerColor is 'black'
-              <div className=" flex flex-col justify-center items-center space-y-4 w-full">
+              <div className="flex flex-col lg:justify-center justify-start lg:items-center items-start space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
                   {winner === "black" && (
                     <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
@@ -161,13 +163,15 @@ export default function Winner({
                     </div>
                   )}
                 </div>
-                <Image
-                  src="/blackPlayer.png"
-                  alt="Winner"
-                  width={100}
-                  height={100}
-                  className=" border-4 border-yellow-600 rounded-lg"
-                />
+                <div className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                  <Image
+                    src="/blackPlayer.png"
+                    alt="Winner"
+                    fill
+                    sizes="(max-width: 768px) 64px, (max-width: 1024px) 80px, 96px"
+                    className="border-4 border-yellow-600 rounded-lg object-cover"
+                  />
+                </div>
                 <motion.div
                   className="flex justify-center items-center space-x-2"
                   ref={winner === "black" ? winnerPlayerRef : null}
@@ -190,7 +194,7 @@ export default function Winner({
                     ease: "easeOut",
                   }}
                 >
-                  <span className="text-white text-xl font-semibold">You</span>
+                  <span className="text-white text-lg font-semibold">You</span>
                   {/* <span className="text-yellow-400 text-xl font-bold">
                     Player
                   </span> */}
@@ -238,14 +242,28 @@ export default function Winner({
             </div> */}
           </div>
           <div className="flex flex-col items-center justify-center space-y-4">
-            <Image src="/win.png" alt="Winner" width={200} height={200} />
+           <Image
+              src="/win.png"
+              alt="Winner"
+              width={128} // Smaller base size for mobile
+              height={128}
+              className="w-20 h-20 md:w-48 md:h-48 lg:w-56 lg:h-56 object-contain"
+            />
             <div
               className=" flex justify-center items-center space-x-2 relative"
               ref={coinsSourceRef}
             >
-              <Image src="/coins.png" alt="Winner" width={100} height={90} />
+              <div className="relative w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20">
+                <Image
+                  src="/coins.png"
+                  alt="Coin"
+                  fill
+                  sizes="(max-width: 768px) 48px, (max-width: 1024px) 64px, 80px"
+                  className="object-cover"
+                />
+              </div>
               <motion.h1
-                className="text-yellow-400 font-bold text-4xl"
+                className="text-yellow-400 font-bold lg:text-4xl text-2xl"
                 animate={
                   isAnimating
                     ? {
@@ -529,21 +547,23 @@ export default function Winner({
           <div className=" w-full">
             {playerColor === "white" ? (
               // Black player on right when playerColor is 'white'
-              <div className=" flex flex-col justify-center items-center space-y-4 w-full">
+              <div className=" flex flex-col justify-center items-center lg:space-y-4 space-y-1 w-full">
                 <div className=" min-h-[45px] mb-5">
                   {winner === "black" && (
-                    <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
+                    <div className=" bg-green-500 py-1 lf:px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
                   )}
                 </div>
-                <Image
-                  src="/blackPlayer.png"
-                  alt="Winner"
-                  width={100}
-                  height={100}
-                  className=" border-4 border-yellow-600 rounded-lg"
-                />
+                <div className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                  <Image
+                    src="/blackPlayer.png"
+                    alt="Winner"
+                    fill
+                    sizes="(max-width: 768px) 64px, (max-width: 1024px) 80px, 96px"
+                    className="border-4 border-yellow-600 rounded-lg object-cover"
+                  />
+                </div>
                 <motion.div
                   className="flex justify-center items-center space-x-2"
                   ref={winner === "black" ? winnerPlayerRef : null}
@@ -566,31 +586,35 @@ export default function Winner({
                     ease: "easeOut",
                   }}
                 >
-                  <span className="text-white text-xl font-semibold">
+                  <div className="flex flex-col items-center space-y-1">
+                  <span className="text-white text-lg font-semibold">
                     Black
                   </span>
-                  <span className="text-yellow-400 text-xl font-bold">
+                  <span className="text-yellow-400 text-lg font-bold">
                     Player
                   </span>
+                  </div>
                 </motion.div>
               </div>
             ) : (
               // White player on right when playerColor is 'black'
-              <div className=" flex flex-col justify-center items-center space-y-4 w-full">
+              <div className=" flex flex-col lg:justify-center justify-end items-end lg:items-center space-y-4 w-full">
                 <div className=" min-h-[45px] mb-5">
                   {winner === "white" && (
-                    <div className=" bg-green-500 py-1 px-6 rounded-md text-white text-2xl font-bold w-fit uppercase ">
+                    <div className=" bg-green-500 py-1 px-2 rounded-md text-white text-2xl font-bold w-fit uppercase ">
                       Winner!
                     </div>
                   )}
                 </div>
-                <Image
-                  src="/whitePlayer.jpg"
-                  alt="Winner"
-                  width={100}
-                  height={100}
-                  className=" border-4 border-yellow-600 rounded-lg"
-                />
+                  <div className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                    <Image
+                      src="/whitePlayer.jpg"
+                      alt="Winner"
+                      fill
+                      sizes="(max-width: 768px) 64px, (max-width: 1024px) 80px, 96px"
+                      className="border-4 border-yellow-600 rounded-lg object-cover"
+                    />
+                  </div>
                 <motion.div
                   className="flex justify-center items-center space-x-2"
                   ref={winner === "white" ? winnerPlayerRef : null}
@@ -613,12 +637,14 @@ export default function Winner({
                     ease: "easeOut",
                   }}
                 >
-                  <span className="text-white text-xl font-semibold">
+                  <div className="flex flex-col items-center space-y-1">
+                  <span className="text-white text-lg font-semibold">
                     White
                   </span>
-                  <span className="text-yellow-400 text-xl font-bold">
+                  <span className="text-yellow-400 text-lg font-bold">
                     Player
                   </span>
+                  </div>
                 </motion.div>
               </div>
             )}
@@ -675,7 +701,7 @@ export default function Winner({
           </Button> */}
           <Button
             onClick={() => (window.location.href = "/")}
-            className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
+            className="lg:min-w-[300px] min-w-[100px] lg:!px-10 !px-3 h-14 text-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
             size="lg"
           >
             <RotateCcw className="w-6 h-6 mr-2" />
