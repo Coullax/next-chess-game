@@ -6,7 +6,15 @@ import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Winner({ winner, betAmount, playerColor, requestRematch, showRematchRequest, acceptRematch, ignoreRematch}) {
+export default function Winner({
+  winner,
+  betAmount,
+  playerColor,
+  requestRematch,
+  showRematchRequest,
+  acceptRematch,
+  ignoreRematch,
+}) {
   // const [winner, setWinner] = useState("white");
   const [wCapturedPieces, setWCapturedPieces] = useState(["p", "n", "b", "r"]);
   const [bCapturedPieces, setBCapturedPieces] = useState([
@@ -32,6 +40,42 @@ export default function Winner({ winner, betAmount, playerColor, requestRematch,
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    try {
+      const fakeTokens = sessionStorage.getItem("fakeTokens");
+      let currentTokens = 0;
+      
+      // Get current tokens or initialize with default amount
+      if (fakeTokens) {
+        currentTokens = JSON.parse(fakeTokens);
+      } else {
+        // Initialize with default amount if no tokens exist
+        currentTokens = 1000; // Default starting amount
+      }
+      
+      let newTokens = currentTokens;
+      
+      // Check if current player won or lost
+      const didWin = 
+        (playerColor === "white" && winner === "white") ||
+        (playerColor === "black" && winner === "black");
+      
+      if (didWin) {
+        // Winner gets the full bet amount added to their tokens
+        newTokens = currentTokens + betAmount;
+      } else {
+        // Loser loses the full bet amount from their tokens
+        newTokens = Math.max(0, currentTokens - betAmount); // Ensure tokens don't go below 0
+      }
+      
+      sessionStorage.setItem("fakeTokens", JSON.stringify(newTokens));
+    } catch (error) {
+      console.error("Error updating tokens:", error);
+      // Fallback: set default tokens if there's an error
+      sessionStorage.setItem("fakeTokens", JSON.stringify(1000));
+    }
+  }, [playerColor, winner, betAmount]); // Added proper dependencies
 
   return (
     // <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-black relative overflow-hidden flex items-center justify-center p-4">
@@ -630,7 +674,7 @@ export default function Winner({ winner, betAmount, playerColor, requestRematch,
             CAN'T PLAY AGAIN
           </Button> */}
           <Button
-            onClick={() => window.location.href = '/'}
+            onClick={() => (window.location.href = "/")}
             className=" min-w-[300px] !px-10 h-14 text-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
             size="lg"
           >
