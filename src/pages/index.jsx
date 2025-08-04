@@ -183,12 +183,12 @@ export default function Home() {
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
         <header className="p-6">
-          <div className="flex justify-between items-center max-w-7xl mx-auto">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-2xl">♚</span>
+          <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                <span className="text-xl sm:text-2xl">♚</span>
               </div>
-              <h1 className="uppercase text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
+              <h1 className="uppercase text-lg sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 bg-clip-text text-transparent">
                 Royal Chess Arena
               </h1>
             </div>
@@ -198,7 +198,7 @@ export default function Home() {
                 !isConnected ? setIsModalOpen(true) : setIsModalOpen(false)
               }
               className={`
-                px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer
+                px-6 py-3 mt-5 md:mt-0 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer
                 ${
                   isConnected
                     ? "bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg shadow-green-500/25"
