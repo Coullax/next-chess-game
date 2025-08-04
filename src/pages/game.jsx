@@ -1150,7 +1150,7 @@ export default function ChessGame() {
             </div>
 
             {/* Chess Board - Center */}
-            <main className="w-[95%] p-0 md:p-8 order-2 lg:order-2">
+            <main className="w-[85%] p-0 md:p-8 order-2 lg:order-2">
               <div className="max-h-[45vh] mx-auto aspect-square">
                 <div
                   id="myBoard"
