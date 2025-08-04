@@ -39,7 +39,7 @@ export default function ChessGame() {
   const [winner, setWinner] = useState(null); // Track winner state
   const [rematchStarted, setRematchStarted] = useState(false); // Track rematch acceptance
   const [mobilePanelOpen, setMobilePanelOpen] = useState(false); // Mobile panel state
-  const [mobileActiveTab, setMobileActiveTab] = useState('moves'); // Mobile active tab
+  const [mobileActiveTab, setMobileActiveTab] = useState("moves"); // Mobile active tab
 
   // Initialize game parameters once on mount
   useEffect(() => {
@@ -67,26 +67,28 @@ export default function ChessGame() {
     // Add mobile touch handling for the chess board
     const handleTouchStart = (e) => {
       // Only prevent if touching chess board elements
-      if (e.target.closest('#myBoard')) {
+      if (e.target.closest("#myBoard")) {
         e.preventDefault();
       }
     };
 
     const handleTouchMove = (e) => {
       // Only prevent if touching chess board elements
-      if (e.target.closest('#myBoard')) {
+      if (e.target.closest("#myBoard")) {
         e.preventDefault();
       }
     };
 
     // Add passive: false to ensure preventDefault works
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
       document.head.removeChild(styleSheet);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
 
@@ -686,7 +688,7 @@ export default function ChessGame() {
       gameHasStarted,
       gameOver,
       gameExists: !!gameRef.current,
-      gameOverCheck: gameRef.current?.game_over()
+      gameOverCheck: gameRef.current?.game_over(),
     });
 
     if (!gameRef.current || gameRef.current.game_over()) {
@@ -701,20 +703,37 @@ export default function ChessGame() {
 
     // Allow movement even if gameHasStarted is false, but game exists
     // The game might not be marked as started but moves can still be made
-    
+
     // Check if it's the player's turn and they're moving their own pieces
     if (playerColor === "white") {
       const canMove = currentTurn === "w" && isWhitePiece;
-      console.log("🔍 WHITE PLAYER CHECK:", { currentTurn, isWhitePiece, canMove });
+      console.log("🔍 WHITE PLAYER CHECK:", {
+        currentTurn,
+        isWhitePiece,
+        canMove,
+      });
       return canMove;
     } else {
       const canMove = currentTurn === "b" && isBlackPiece;
-      console.log("🔍 BLACK PLAYER CHECK:", { currentTurn, isBlackPiece, canMove });
+      console.log("🔍 BLACK PLAYER CHECK:", {
+        currentTurn,
+        isBlackPiece,
+        canMove,
+      });
       return canMove;
     }
   };
   const onDrop = (source, target) => {
-    console.log("📤 DROP ATTEMPT:", source, "->", target, "gameOver:", gameOver, "isReconnecting:", isReconnecting);
+    console.log(
+      "📤 DROP ATTEMPT:",
+      source,
+      "->",
+      target,
+      "gameOver:",
+      gameOver,
+      "isReconnecting:",
+      isReconnecting
+    );
 
     if (!gameRef.current || gameOver || isReconnecting) return;
 
@@ -727,7 +746,10 @@ export default function ChessGame() {
     }
 
     console.log("✅ VALID MOVE executed:", move);
-    console.log("📤 Sending move to server:", { ...theMove, captured: move.captured || null });
+    console.log("📤 Sending move to server:", {
+      ...theMove,
+      captured: move.captured || null,
+    });
 
     if (socketRef.current) {
       socketRef.current.emit("move", {
@@ -1052,9 +1074,9 @@ export default function ChessGame() {
         </header>
 
         <div className="max-w-7xl mx-auto px-2 sm:px-4">
-          <div className="cover-container items-center justify-center flex flex-col lg:flex-row p-2 sm:p-3 mx-auto min-h-[50vh] lg:h-[90dvh] relative">
+          <div className="cover-container items-center justify-center flex flex-col lg:flex-row p-2 sm:p-3 mx-auto min-h-[85vh] lg:h-[90dvh] relative">
             {/* Prize Display */}
-            <div className="w-full text-center mb-4 lg:absolute lg:top-4 lg:left-1/2 lg:transform lg:-translate-x-1/2 text-yellow-400 font-bold text-lg sm:text-2xl lg:text-4xl flex items-center justify-center flex-wrap gap-2">
+            <div className="w-full text-center mb-10 md:mb-4 lg:absolute lg:top-4 lg:left-1/2 lg:transform lg:-translate-x-1/2 text-yellow-400 font-bold text-lg sm:text-2xl lg:text-4xl flex items-center justify-center flex-wrap gap-2">
               <img
                 width="53"
                 height="53"
@@ -1073,8 +1095,8 @@ export default function ChessGame() {
             </div>
 
             {/* Desktop layout - keep what already works */}
-            <div className="hidden lg:block lg:w-[30%] lg:min-h-[45vh] lg:order-1">
-              <div className="w-full h-full px-3 sm:px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white overflow-auto">
+            <div className=" hidden md:block w-full md:w-[30%] order-3 lg:order-1">
+              <div className="w-full md:min-h-[38vh] px-3 sm:px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl text-white overflow-auto">
                 <h5 className="mb-3 font-bold text-sm sm:text-base">
                   Move History:
                 </h5>
@@ -1128,8 +1150,8 @@ export default function ChessGame() {
             </div>
 
             {/* Chess Board - Center */}
-            <main className="w-full lg:flex-1 max-w-[90vw] sm:max-w-[70vw] lg:max-w-none p-2 sm:p-4 lg:p-8 mx-auto order-1 lg:order-2">
-              <div className="w-full max-w-[500px] mx-auto aspect-square">
+            <main className=" w-[45%] p-0 md:p-8 order-2 lg:order-2">
+              <div className="max-h-[45vh] mx-auto aspect-square">
                 <div
                   id="myBoard"
                   ref={boardRef}
@@ -1138,7 +1160,7 @@ export default function ChessGame() {
               </div>
 
               {/* Player timer - visible on both mobile and desktop */}
-              <div className="flex justify-center mt-3">
+              <div className=" md:hidden flex justify-center mt-3">
                 <div className="text-lg sm:text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-2 sm:px-3">
                   {playerColor === "white"
                     ? formatTime(whiteTime)
@@ -1163,13 +1185,20 @@ export default function ChessGame() {
             </main>
 
             {/* Desktop - Right Sidebar */}
-            <div className=" lg:w-[30%] lg:min-h-[45vh] lg:order-3">
-              <div className="w-full px-3 sm:px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl min-h-[300px] lg:min-h-[350px] text-white">
-                <div className="flex items-center border-b border-white/20 pb-3 justify-start space-x-3">
+            <div className=" w-full lg:w-[25%] mb-3 md:mb-0 md:min-h-[45vh] order-1 lg:order-3">
+              <div className="hidden md:block">
+                <div className="text-lg sm:text-2xl md:text-3xl font-bold bg-white/10 border border-white/20 rounded-xl text-white w-fit px-2 sm:px-3">
+                  {playerColor === "white"
+                    ? formatTime(whiteTime)
+                    : formatTime(blackTime)}
+                </div>
+              </div>
+              <div className="w-full px-3 sm:px-4 py-3 bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl md:min-h-[350px] text-white">
+                <div className="flex items-center md:border-b border-white/20 md:pb-3 justify-start space-x-3">
                   <div className="h-3 rounded-full bg-green-100 aspect-square"></div>
                   <h3 className="text-sm sm:text-base">{status}</h3>
                 </div>
-                <div className="mt-3">
+                <div className="mt-3 hidden lg:block">
                   <h3
                     id="status"
                     className="w-full min-h-[4vh] py-3 text-white flex justify-start items-center"
@@ -1222,7 +1251,7 @@ export default function ChessGame() {
                     <div>Reconnecting: {isReconnecting ? "✓" : "✗"}</div>
                   </div>
                 </div>
-                {gameOver && (
+                {/* {gameOver && (
                   <button
                     onClick={requestRematch}
                     className="mt-4 w-full px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm sm:text-base transition-colors"
@@ -1230,7 +1259,7 @@ export default function ChessGame() {
                   >
                     Request Rematch
                   </button>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -1239,7 +1268,7 @@ export default function ChessGame() {
           <div className="fixed bottom-4 right-4 lg:hidden z-40">
             <button
               onClick={() => setMobilePanelOpen((prev) => !prev)}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1261,9 +1290,7 @@ export default function ChessGame() {
           {/* Mobile Only - Game Info Modal */}
           <div
             className={`fixed inset-0 bg-black/80 z-50 transition-all duration-300 lg:hidden ${
-              mobilePanelOpen
-                ? "opacity-100"
-                : "opacity-0 pointer-events-none"
+              mobilePanelOpen ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           >
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-slate-900 to-purple-900 rounded-t-2xl max-h-[80vh] overflow-auto">
@@ -1290,193 +1317,192 @@ export default function ChessGame() {
                 </button>
               </div>
 
-                <div className="p-4">
-                  {/* Simple Tabs */}
-                  <div className="flex border-b border-white/20 mb-4">
-                    <button
-                      onClick={() => setMobileActiveTab("moves")}
-                      className={`flex-1 py-2 px-3 text-center text-sm font-medium ${
-                        mobileActiveTab === "moves"
-                          ? "border-b-2 border-yellow-400 text-yellow-400"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      Move History
-                    </button>
-                    <button
-                      onClick={() => setMobileActiveTab("status")}
-                      className={`flex-1 py-2 px-3 text-center text-sm font-medium ${
-                        mobileActiveTab === "status"
-                          ? "border-b-2 border-yellow-400 text-yellow-400"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      Game Status
-                    </button>
+              <div className="p-4">
+                {/* <div className="flex border-b border-white/20 mb-4">
+                  <button
+                    onClick={() => setMobileActiveTab("moves")}
+                    className={`flex-1 py-2 px-3 text-center text-sm font-medium ${
+                      mobileActiveTab === "moves"
+                        ? "border-b-2 border-yellow-400 text-yellow-400"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    Move History
+                  </button>
+                  <button
+                    onClick={() => setMobileActiveTab("status")}
+                    className={`flex-1 py-2 px-3 text-center text-sm font-medium ${
+                      mobileActiveTab === "status"
+                        ? "border-b-2 border-yellow-400 text-yellow-400"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    Game Status
+                  </button>
+                </div> */}
+
+                {/* Tab Content */}
+                {mobileActiveTab === "moves" ? (
+                  <div className="w-full">
+                    {/* <h5 className="mb-2 font-bold text-sm">Move History:</h5> */}
+                    {pgn ? (
+                      <div className="overflow-auto max-h-[40vh]">
+                        <table className="w-full text-xs sm:text-sm">
+                          <thead className="sticky top-0 bg-slate-900/95">
+                            <tr>
+                              <th className="p-1 sm:p-2 text-left border-b border-white/20">
+                                #
+                              </th>
+                              <th className="p-1 sm:p-2 text-left border-b border-white/20">
+                                White
+                              </th>
+                              <th className="p-1 sm:p-2 text-left border-b border-white/20">
+                                Black
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(() => {
+                              const moves = pgn
+                                .split(/\d+\./)
+                                .filter((move) => move.trim());
+                              return moves.map((moveSet, index) => {
+                                const [whiteMove, blackMove] = moveSet
+                                  .trim()
+                                  .split(/\s+/);
+                                return (
+                                  <tr
+                                    key={index + 1}
+                                    className="hover:bg-white/5"
+                                  >
+                                    <td className="p-1 sm:p-2 border-b border-white/10 font-mono text-gray-400">
+                                      {index + 1}
+                                    </td>
+                                    <td className="p-1 sm:p-2 border-b border-white/10 font-mono">
+                                      {whiteMove || "-"}
+                                    </td>
+                                    <td className="p-1 sm:p-2 border-b border-white/10 font-mono">
+                                      {blackMove || "-"}
+                                    </td>
+                                  </tr>
+                                );
+                              });
+                            })()}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 italic text-sm">
+                        No moves yet
+                      </p>
+                    )}
                   </div>
-
-                  {/* Tab Content */}
-                  {mobileActiveTab === "moves" ? (
-                    <div className="w-full">
-                      <h5 className="mb-2 font-bold text-sm">Move History:</h5>
-                      {pgn ? (
-                        <div className="overflow-auto max-h-[40vh]">
-                          <table className="w-full text-xs sm:text-sm">
-                            <thead className="sticky top-0 bg-slate-900/95">
-                              <tr>
-                                <th className="p-1 sm:p-2 text-left border-b border-white/20">
-                                  #
-                                </th>
-                                <th className="p-1 sm:p-2 text-left border-b border-white/20">
-                                  White
-                                </th>
-                                <th className="p-1 sm:p-2 text-left border-b border-white/20">
-                                  Black
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {(() => {
-                                const moves = pgn
-                                  .split(/\d+\./)
-                                  .filter((move) => move.trim());
-                                return moves.map((moveSet, index) => {
-                                  const [whiteMove, blackMove] = moveSet
-                                    .trim()
-                                    .split(/\s+/);
-                                  return (
-                                    <tr
-                                      key={index + 1}
-                                      className="hover:bg-white/5"
-                                    >
-                                      <td className="p-1 sm:p-2 border-b border-white/10 font-mono text-gray-400">
-                                        {index + 1}
-                                      </td>
-                                      <td className="p-1 sm:p-2 border-b border-white/10 font-mono">
-                                        {whiteMove || "-"}
-                                      </td>
-                                      <td className="p-1 sm:p-2 border-b border-white/10 font-mono">
-                                        {blackMove || "-"}
-                                      </td>
-                                    </tr>
-                                  );
-                                });
-                              })()}
-                            </tbody>
-                          </table>
-                        </div>
-                      ) : (
-                        <p className="text-gray-400 italic text-sm">
-                          No moves yet
-                        </p>
-                      )}
+                ) : (
+                  <div className="w-full">
+                    <div className="flex items-center mb-3 pb-2 border-b border-white/20">
+                      <div className="h-3 rounded-full bg-green-100 aspect-square mr-2"></div>
+                      <h3 className="text-sm">{status}</h3>
                     </div>
-                  ) : (
-                    <div className="w-full">
-                      <div className="flex items-center mb-3 pb-2 border-b border-white/20">
-                        <div className="h-3 rounded-full bg-green-100 aspect-square mr-2"></div>
-                        <h3 className="text-sm">{status}</h3>
-                      </div>
 
-                      <div className="mt-2 space-y-1 text-sm text-gray-400">
-                        <div>Scripts Ready: {scriptsReady ? "✓" : "✗"}</div>
-                        <div>Game Started: {gameHasStarted ? "✓" : "✗"}</div>
-                        <div>Game Over: {gameOver ? "✓" : "✗"}</div>
-                        <div>
-                          Player Color:{" "}
-                          <span className="text-yellow-300 uppercase">
-                            {playerColor}
-                          </span>
-                        </div>
-                        <div>
-                          Current Turn:{" "}
-                          <span className="text-yellow-300">
-                            {gameRef.current?.turn() === "w"
-                              ? "White"
-                              : gameRef.current?.turn() === "b"
-                              ? "Black"
-                              : "N/A"}
-                          </span>
-                        </div>
-                        <div>
-                          Can I Move?:{" "}
-                          <span className="text-yellow-300">
-                            {gameRef.current?.turn() ===
-                            (playerColor === "white" ? "w" : "b")
-                              ? "✓ YES"
-                              : "✗ NO"}
-                          </span>
-                        </div>
-                        <div>
-                          Move Count: {gameRef.current?.history()?.length || 0}
-                        </div>
-                        <div>Initializing: {isInitializing ? "✓" : "✗"}</div>
-                        <div>Reconnecting: {isReconnecting ? "✓" : "✗"}</div>
+                    <div className="mt-2 space-y-1 text-sm text-gray-400">
+                      <div>Scripts Ready: {scriptsReady ? "✓" : "✗"}</div>
+                      <div>Game Started: {gameHasStarted ? "✓" : "✗"}</div>
+                      <div>Game Over: {gameOver ? "✓" : "✗"}</div>
+                      <div>
+                        Player Color:{" "}
+                        <span className="text-yellow-300 uppercase">
+                          {playerColor}
+                        </span>
                       </div>
-
-                      {gameOver && (
-                        <button
-                          onClick={requestRematch}
-                          className="mt-4 w-full px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm transition-colors"
-                          disabled={rematchRequested}
-                        >
-                          Request Rematch
-                        </button>
-                      )}
+                      <div>
+                        Current Turn:{" "}
+                        <span className="text-yellow-300">
+                          {gameRef.current?.turn() === "w"
+                            ? "White"
+                            : gameRef.current?.turn() === "b"
+                            ? "Black"
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div>
+                        Can I Move?:{" "}
+                        <span className="text-yellow-300">
+                          {gameRef.current?.turn() ===
+                          (playerColor === "white" ? "w" : "b")
+                            ? "✓ YES"
+                            : "✗ NO"}
+                        </span>
+                      </div>
+                      <div>
+                        Move Count: {gameRef.current?.history()?.length || 0}
+                      </div>
+                      <div>Initializing: {isInitializing ? "✓" : "✗"}</div>
+                      <div>Reconnecting: {isReconnecting ? "✓" : "✗"}</div>
                     </div>
-                  )}
-                </div>
+
+                    {gameOver && (
+                      <button
+                        onClick={requestRematch}
+                        className="mt-4 w-full px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm transition-colors"
+                        disabled={rematchRequested}
+                      >
+                        Request Rematch
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-
-          <footer className="p-4 sm:p-6 text-center mt-8 lg:absolute lg:bottom-0 lg:left-0 lg:right-0">
-            <p className="text-gray-400 text-xs sm:text-sm">
-              © 2025{" "}
-              <a
-                href="https://coullax.com/"
-                className="text-purple-400 hover:text-purple-300 transition-colors"
-              >
-                Coullax
-              </a>{" "}
-              All Rights Reserved.
-            </p>
-          </footer>
         </div>
 
-        {/* Rematch Request Modal - Responsive */}
-        {showRematchRequest && (
-          <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:w-[25%] bg-black rounded-lg mx-4 lg:absolute lg:top-4 lg:right-4 lg:mx-0">
-              <div className="w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8 relative z-10 bg-gradient-to-b from-yellow-900/20 to-red-900/20 rounded-lg backdrop-blur-md border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 blur-sm rounded-lg opacity-75 animate-pulse" />
-                <div className="absolute inset-[2px] bg-gradient-to-b from-slate-900 to-black rounded-lg" />
-                <div className="relative z-20 w-full">
-                  <h2 className="z-30 text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-white">
-                    Rematch Request
-                  </h2>
-                  <p className="mb-3 text-sm sm:text-base">
-                    Opponent wants a rematch. Accept?
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      onClick={acceptRematch}
-                      className="flex-1 min-w-[100px] px-6 sm:px-10 h-12 sm:h-14 text-sm sm:text-lg rounded-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={ignoreRematch}
-                      className="flex-1 min-w-[100px] px-6 sm:px-10 h-12 sm:h-14 text-sm sm:text-lg rounded-lg font-black bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border-2 border-red-400 shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
-                    >
-                      Ignore
-                    </button>
-                  </div>
+        <footer className="p-4 sm:p-6 text-center mt-8 absolute bottom-0 left-0 right-0">
+          <p className="text-gray-400 text-xs sm:text-sm">
+            © 2025{" "}
+            <a
+              href="https://coullax.com/"
+              className="text-purple-400 hover:text-purple-300 transition-colors"
+            >
+              Coullax
+            </a>{" "}
+            All Rights Reserved.
+          </p>
+        </footer>
+      </div>
+
+      {/* Rematch Request Modal - Responsive */}
+      {showRematchRequest && (
+        <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:w-[25%] bg-black rounded-lg mx-4 lg:absolute lg:top-4 lg:right-4 lg:mx-0">
+            <div className="w-full py-4 sm:py-6 px-4 sm:px-6 lg:px-8 relative z-10 bg-gradient-to-b from-yellow-900/20 to-red-900/20 rounded-lg backdrop-blur-md border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 blur-sm rounded-lg opacity-75 animate-pulse" />
+              <div className="absolute inset-[2px] bg-gradient-to-b from-slate-900 to-black rounded-lg" />
+              <div className="relative z-20 w-full">
+                <h2 className="z-30 text-xl sm:text-2xl lg:text-3xl font-bold mb-3 text-white">
+                  Rematch Request
+                </h2>
+                <p className="mb-3 text-sm sm:text-base">
+                  Opponent wants a rematch. Accept?
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={acceptRematch}
+                    className="flex-1 min-w-[100px] px-6 sm:px-10 h-12 sm:h-14 text-sm sm:text-lg rounded-lg font-black bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white border-2 border-green-400 shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={ignoreRematch}
+                    className="flex-1 min-w-[100px] px-6 sm:px-10 h-12 sm:h-14 text-sm sm:text-lg rounded-lg font-black bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border-2 border-red-400 shadow-lg shadow-red-500/30 transition-all duration-300 hover:scale-105 cursor-pointer"
+                  >
+                    Ignore
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       {gameOver && (
         <Winner
