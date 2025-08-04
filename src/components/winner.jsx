@@ -253,7 +253,7 @@ export default function Winner({
               className=" flex justify-center items-center space-x-2 relative"
               ref={coinsSourceRef}
             >
-              <div className="relative w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20">
+              <div className="relative w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20">
                 <Image
                   src="/coins.png"
                   alt="Coin"
@@ -263,7 +263,7 @@ export default function Winner({
                 />
               </div>
               <motion.h1
-                className="text-yellow-400 font-bold lg:text-4xl text-2xl"
+                className="text-yellow-400 font-bold lg:text-4xl text-base"
                 animate={
                   isAnimating
                     ? {
