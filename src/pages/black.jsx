@@ -84,7 +84,6 @@ export default function BlackGame() {
       
       // Socket event listeners
       socket.on('newMove', function(move) {
-        debugger
         if (gameRef.current) {
           const executedMove = gameRef.current.move(move);
           if (executedMove && move.captured) {
@@ -131,7 +130,6 @@ export default function BlackGame() {
   // const initializeGame = async () => {
   //   await fetch("/api/socket");
   //   socket = io();
-  //   debugger
 
   //   // Initialize chess game
   //   if (typeof window !== 'undefined' && window.Chess && window.Chessboard && boardRef.current) {
@@ -144,7 +142,6 @@ export default function BlackGame() {
   //       onSnapEnd: onSnapEnd,
   //       pieceTheme: '/img/chesspieces/wikipedia/{piece}.png'
   //     };
-  //     debugger
   //     boardInstanceRef.current = window.Chessboard(boardRef.current, config);
   //     boardInstanceRef.current.flip();
   //     updateStatus();
@@ -223,7 +220,6 @@ export default function BlackGame() {
   };
 
   const updateStatus = () => {
-    // debugger
     if (!gameRef.current) return;
     var status = '';
     var moveColor = 'White';
