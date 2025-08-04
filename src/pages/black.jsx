@@ -3,7 +3,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Head from "next/head";
 import Script from "next/script";
 import io from "socket.io-client";
-import Pusher from "pusher-js";
 import Image from "next/image";
 
 let socket;
@@ -60,9 +59,7 @@ export default function BlackGame() {
     const initializeGame = async () => {
       // await fetch("/api/socket");
       // socket = io();
-      // const pusher = new Pusher('a4ad42bd9662f1406a19', {
-      //   cluster: 'ap2'
-      // });
+
       socket = io("https://chess-site-server.onrender.com", {
         // path: "/socket.io", // Adjust if your backend uses a different path
         // withCredentials: true,
@@ -84,55 +81,7 @@ export default function BlackGame() {
         updateStatus();
       }
 
-      // Join channel based on game code from URL
-      // const gameCode = router.query.code;
-      // // if (gameCode) {
-      //   const channel = pusher.subscribe('chess-game');
-
-      //   // Pusher event listeners
-      //   channel.bind("newMove", (move) => {
-      //     if (gameRef.current) {
-      //       const executedMove = gameRef.current.move(move);
-      //       if (executedMove && move.captured) {
-      //         setCapturedPieces((prev) => [...prev, move.captured]);
-      //       }
-      //       if (boardInstanceRef.current) {
-      //         boardInstanceRef.current.position(gameRef.current.fen());
-      //       }
-      //       updateStatus();
-      //     }
-      //   });
-
-      //   channel.bind("startGame", () => {
-      //     console.log("Game started");
-      //     setGameHasStarted(true);
-      //     updateStatus();
-      //   });
-
-      //   channel.bind("gameOverDisconnect", () => {
-      //     setGameOver(true);
-      //     updateStatus();
-      //     router.push("/win?player1Bool=false");
-      //   });
-
-      //   // Trigger joinGame event via API
-      //   await fetch("/api/pusher", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({ event: "joinGame", data: { code: router.query.code }, channel: 'chess-game' }),
-      //   });
-      // // }
-
-      // return () => {
-      //   if (gameCode && channel) {
-      //     channel.unbind("newMove");
-      //     channel.unbind("startGame");
-      //     channel.unbind("gameOverDisconnect");
-      //     channel.unsubscribe();
-      //     pusher.disconnect(); // Optional, depending on app lifecycle
-      //   }
-      // };
-
+      
       // Socket event listeners
       socket.on('newMove', function(move) {
         debugger
